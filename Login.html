@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iReportPH – User Login</title>
+<link rel="icon" type="image/png" href="./Screenshot 2025-12-19 134046.png">
+
+<style>
+/* ================= THEME TOKENS ================= */
+:root {
+    --bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --accent: #2563eb;
+    --border: #e5e7eb;
+    --radius-lg: 18px;
+    --radius-md: 12px;
+    --shadow-soft: 0 10px 25px rgba(0,0,0,0.08);
+    --shadow-strong: 0 30px 80px rgba(0,0,0,0.25);
+    --transition: 0.25s ease;
+}
+
+/* DARK MODE */
+body.dark {
+    --bg: #020617;
+    --card-bg: #0f172a;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5f5;
+    --accent: #3b82f6;
+    --border: #1e293b;
+    --shadow-soft: 0 12px 35px rgba(0,0,0,0.19);
+    --shadow-strong: 0 35px 90px rgba(0,0,0,0.7);
+}
+
+/* GLOBAL RESET */
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--bg), color-mix(in srgb, var(--bg) 90%, var(--accent) 10%));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    transition: background var(--transition), color var(--transition);
+}
+
+/* LOGIN CARD */
+.login-wrapper {
+    width: 100%;
+    max-width: 1100px;
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    box-shadow: var(--shadow-strong);
+    animation: fadeInUp 0.4s ease;
+}
+
+/* LEFT FORM */
+.login-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    min-height: 100%;
+    background: url('../images/Screenshot 2025-12-19 133656.png') center/cover no-repeat;
+}
+
+/* Form content wrapper */
+.login-form .content-wrapper {
+    width: 100%;
+    max-width: 380px;
+    padding: 60px 40px;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.65);
+    text-align: center;
+    box-shadow: var(--shadow-soft);
+    margin: 20px;
+}
+
+/* Dark mode for content */
+body.dark .login-form .content-wrapper {
+    background: rgba(15, 23, 42, 0.95);
+}
+
+/* Form text */
+.login-form h1 { font-size: 2rem; font-weight: 700; margin-bottom: 20px; }
+.login-form p { font-size: 1rem; color: var(--text-secondary); margin-bottom: 20px; }
+
+/* Google button */
+.google-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.9);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    margin-bottom: 20px;
+}
+.google-btn:hover {
+    background: rgba(255,255,255,1);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+}
+
+/* Already logged in message */
+.already-logged-in {
+    padding: 14px 16px;
+    background: rgba(37, 99, 235, 0.12);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+}
+
+/* Switch to admin */
+.switch-admin {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    transition: opacity var(--transition), transform var(--transition);
+}
+.switch-admin:hover { opacity: 0.85; transform: translateX(-4px); }
+
+/* RIGHT VISUAL */
+.login-visual {
+    position: relative;
+    background: url("../images/Screenshot 2025-12-19 134046.png") center/cover no-repeat;
+    overflow: hidden;
+}
+.login-visual::before {
+    content:"";
+    position:absolute;
+    inset:0;
+    backdrop-filter: blur(1px);
+    background: rgba(0,0,0,0.15);
+    z-index:0;
+}
+.login-visual::after {
+    content:"";
+    position:absolute;
+    inset:0;
+    background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0.35));
+    z-index:1;
+}
+.visual-content {
+    position: relative;
+    z-index:2;
+    height: 100%;
+    padding: 50px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    color:#ffffff;
+}
+.visual-content h2 { font-size:2rem; font-weight:700; margin-bottom:10px; }
+.visual-content p { font-size:0.95rem; opacity:0.9; max-width:400px; }
+
+/* Theme toggle inside form */
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Hide default checkbox */
+.theme-switch input { display: none; }
+
+/* Slider */
+.slider {
+    position: relative;
+    width: 60px;
+    height: 28px;
+    background: #ccc;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.slider .icon {
+    font-size: 16px;
+    transition: transform 0.3s;
+}
+.slider::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 24px;
+    height: 24px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+.theme-switch input:checked + .slider { background: var(--accent); }
+.theme-switch input:checked + .slider::before { transform: translateX(32px); }
+.theme-switch input:checked + .slider .sun { transform: scale(0); }
+.theme-switch input:checked + .slider .moon { transform: scale(1.2); }
+.theme-switch input:not(:checked) + .slider .moon { transform: scale(0); }
+.theme-switch input:not(:checked) + .slider .sun { transform: scale(1.2); }
+
+/* Responsive */
+@media (max-width:900px) {
+    .login-wrapper { grid-template-columns: 1fr; max-width: 450px; margin: 20px; }
+    .login-visual { display:none; }
+    .login-form .content-wrapper { padding: 40px 30px; margin: 10px; }
+    .login-form h1 { font-size: 1.8rem; }
+}
+@media (max-width:500px){
+    .login-form .content-wrapper { padding: 30px 20px; }
+    .login-form h1 { font-size: 1.6rem; }
+    .google-btn { padding: 10px; font-size: 0.9rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="login-wrapper">
+
+    <!-- LEFT FORM -->
+    <div class="login-form">
+        <div class="content-wrapper">
+            <h1>Welcome Back</h1>
+            <p>Sign in to continue</p>
+
+            <!-- Theme toggle inside form -->
+            <div class="theme-switch-wrapper">
+                <span>Light</span>
+                <label class="theme-switch">
+                    <input type="checkbox" id="themeToggleCheckbox">
+                    <span class="slider">
+                        <span class="icon sun">☀️</span>
+                        <span class="icon moon">🌙</span>
+                    </span>
+                </label>
+                <span>Dark</span>
+            </div>
+
+            <button id="googleSignInBtn" class="google-btn">Sign in with Google</button>
+            <div id="alreadyLoggedIn" class="already-logged-in" style="display:none;"></div>
+            <a href="./admin-login.html" class="switch-admin">← Admin Login</a>
+        </div>
+    </div>
+
+    <!-- RIGHT VISUAL -->
+    <div class="login-visual">
+        <div class="visual-content">
+            <h2>Online Complaint System</h2>
+            <p>Secure and transparent handling of public complaints for accountability and governance.</p>
+        </div>
+    </div>
+    
+
+</div>
+
+<script type="module" src="./firebase-config.js"></script>
+<script type="module">
+import { signInWithGoogle, getCurrentUser, getUserData, logoutUser, onAuthChange } from './auth.js';
+
+// Google Sign-in
+const googleSignInBtn = document.getElementById('googleSignInBtn');
+const alreadyLoggedIn = document.getElementById('alreadyLoggedIn');
+
+googleSignInBtn.addEventListener('click', async () => {
+    const result = await signInWithGoogle(true);
+    if (!result.success) {
+        alert(result.error || 'Sign in failed');
+        return;
+    }
+    const user = getCurrentUser();
+    const data = await getUserData(user.uid);
+    if (data.success && data.data.role === 'admin') {
+        await logoutUser();
+        alert('Admin accounts cannot login here. Use Admin Login page.');
+        return;
+    }
+    alreadyLoggedIn.style.display = 'block';
+    alreadyLoggedIn.textContent = `Logged in as: ${user.email || user.displayName}. Redirecting...`;
+    setTimeout(() => window.location.href='dashboard.html', 800);
+});
+
+// Theme toggle inside form
+const checkbox = document.getElementById('themeToggleCheckbox');
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
+    checkbox.checked = true;
+}
+checkbox.addEventListener('change', () => {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+});
+</script>
+
+</body>
+</html>

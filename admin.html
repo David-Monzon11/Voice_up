@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iReportPH - Admin Dashboard</title>
+    <link rel="icon" type="image/png" href="./Screenshot 2025-12-19 134046.png">
+    <link rel="stylesheet" href="./admin-dashboard.css">
+    <link rel="stylesheet" href="./style.css">
+    <style>
+        /* Weather Forecast Inline Styles (in stats grid) */
+        .weather-forecast-inline {
+            display: flex;
+            flex-direction: column;
+            padding: 20px !important;
+            min-height: auto;
+            height: 100%;
+            justify-content: space-between;
+        }
+
+        .weather-inline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .weather-inline-title-section {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .weather-inline-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--stat-text-color);
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.9;
+            line-height: 1.2;
+        }
+
+        .weather-location-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .weather-inline-location {
+            font-size: 0.7rem;
+            color: var(--stat-subtext-color);
+            opacity: 0.8;
+            line-height: 1.2;
+            flex: 1;
+        }
+
+        .weather-location-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 8px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .weather-location-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(148, 163, 184, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Weather Location Modal */
+        .weather-location-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .weather-location-modal-content {
+            background: var(--surface-solid);
+            border: 1px solid var(--border-soft);
+            border-radius: 20px;
+            padding: 0;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .weather-location-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        .weather-location-modal-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .weather-location-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .weather-location-modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .weather-location-modal-body {
+            padding: 24px;
+        }
+
+        .weather-location-modal-body label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .weather-location-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            background: var(--surface-soft);
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .weather-location-input:focus {
+            outline: none;
+            border-color: var(--brand-accent);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+        }
+
+        .weather-location-examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .weather-location-examples span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-right: 4px;
+        }
+
+        .weather-location-example {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-soft);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .weather-location-example:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--brand-accent);
+            color: var(--text-primary);
+        }
+
+        .weather-location-modal-footer {
+            display: flex;
+            gap: 12px;
+            padding: 20px 24px;
+            border-top: 1px solid var(--border-soft);
+            justify-content: flex-end;
+        }
+
+        .weather-location-save-btn,
+        .weather-location-cancel-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-soft);
+        }
+
+        .weather-location-save-btn {
+            background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+            color: #fff;
+            border: none;
+        }
+
+        .weather-location-save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.4);
+        }
+
+        .weather-location-cancel-btn {
+            background: var(--surface-soft);
+            color: var(--text-secondary);
+        }
+
+        .weather-location-cancel-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        html[data-theme="light"] .weather-location-modal-content {
+            background: #ffffff;
+            border: 1px solid rgba(0, 52, 89, 0.12);
+        }
+
+        html[data-theme="light"] .weather-location-input {
+            background: rgba(0, 52, 89, 0.04);
+            border: 1px solid rgba(0, 52, 89, 0.12);
+            color: #003459;
+        }
+
+        html[data-theme="light"] .weather-location-example {
+            background: rgba(0, 52, 89, 0.04);
+            border: 1px solid rgba(0, 52, 89, 0.12);
+            color: #003459;
+        }
+
+        html[data-theme="light"] .weather-location-cancel-btn {
+            background: rgba(0, 52, 89, 0.04);
+            color: #003459;
+        }
+
+        .weather-inline-current {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+            flex-shrink: 0;
+        }
+
+        .weather-inline-icon {
+            font-size: 1.6rem;
+            line-height: 1;
+        }
+
+        .weather-inline-temp {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--stat-text-color);
+            line-height: 1.2;
+        }
+
+        .weather-inline-desc {
+            font-size: 0.7rem;
+            color: var(--stat-subtext-color);
+            text-transform: capitalize;
+            opacity: 0.9;
+            line-height: 1.2;
+        }
+
+        .weather-forecast-scroll-wrapper {
+            overflow-x: auto;
+            overflow-y: hidden;
+            width: 100%;
+            margin-top: 8px;
+            padding-bottom: 4px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .weather-forecast-scroll-wrapper::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .weather-forecast-scroll-wrapper::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .weather-forecast-scroll-wrapper::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.3);
+            border-radius: 3px;
+        }
+
+        .weather-forecast-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+            background: rgba(148, 163, 184, 0.5);
+        }
+
+        .weather-forecast-grid-inline {
+            display: flex;
+            gap: 10px;
+            width: max-content;
+            min-width: 100%;
+        }
+
+        .weather-day-card-inline {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 10px;
+            padding: 10px 8px;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 70px;
+            flex-shrink: 0;
+            justify-content: space-between;
+        }
+
+        .weather-day-card-inline:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .weather-day-name-inline {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--stat-text-color);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            opacity: 0.9;
+            line-height: 1.2;
+        }
+
+        .weather-day-date-inline {
+            font-size: 0.65rem;
+            color: var(--stat-subtext-color);
+            opacity: 0.7;
+            line-height: 1.2;
+        }
+
+        .weather-day-icon-inline {
+            font-size: 1.5rem;
+            margin: 4px 0;
+            line-height: 1;
+        }
+
+        .weather-day-temp-inline {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .temp-high-inline {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--stat-text-color);
+            line-height: 1.2;
+        }
+
+        .temp-low-inline {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--stat-subtext-color);
+            opacity: 0.8;
+            line-height: 1.2;
+        }
+
+        .weather-day-desc-inline {
+            font-size: 0.65rem;
+            color: var(--stat-subtext-color);
+            text-transform: capitalize;
+            opacity: 0.8;
+            line-height: 1.2;
+            margin-top: 2px;
+        }
+
+        html[data-theme="light"] .weather-day-card-inline {
+            background: rgba(0, 52, 89, 0.04);
+            border: 1px solid rgba(0, 52, 89, 0.12);
+        }
+
+        html[data-theme="light"] .weather-day-card-inline:hover {
+            background: rgba(0, 52, 89, 0.08);
+            box-shadow: 0 4px 12px rgba(0, 52, 89, 0.12);
+        }
+
+        html[data-theme="light"] .weather-forecast-scroll-wrapper::-webkit-scrollbar-track {
+            background: rgba(0, 52, 89, 0.08);
+        }
+
+        html[data-theme="light"] .weather-forecast-scroll-wrapper::-webkit-scrollbar-thumb {
+            background: rgba(0, 52, 89, 0.2);
+        }
+
+        html[data-theme="light"] .weather-forecast-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 52, 89, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .weather-inline-header {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .weather-inline-current {
+                text-align: left;
+                align-items: flex-start;
+            }
+        }
+
+        /* Legacy full-width weather card styles (kept for compatibility) */
+        .weather-forecast-card {
+            background: var(--surface-solid);
+            border: 1px solid var(--border-soft);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 24px var(--shadow-card);
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .weather-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        .weather-header-left {
+            flex: 1;
+        }
+
+        .weather-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .weather-location-main {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .weather-header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .weather-current {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .weather-current-icon {
+            font-size: 3rem;
+            line-height: 1;
+        }
+
+        .weather-current-temp {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .weather-current-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: capitalize;
+        }
+
+        .weather-forecast-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 16px;
+            width: 100%;
+        }
+
+        @media (max-width: 1200px) {
+            .weather-forecast-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .weather-forecast-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .weather-forecast-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .weather-day-card {
+            background: var(--surface-soft);
+            border: 1px solid var(--border-soft);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .weather-day-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px var(--shadow-card);
+        }
+
+        .weather-day-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .weather-day-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .weather-day-icon {
+            font-size: 2.5rem;
+            margin: 12px 0;
+            line-height: 1;
+        }
+
+        .weather-day-temp {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .temp-high {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .temp-low {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .weather-day-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: capitalize;
+            margin-top: 8px;
+        }
+
+        html[data-theme="light"] .weather-forecast-card {
+            background: #ffffff;
+            border: 1px solid rgba(0, 52, 89, 0.12);
+            box-shadow: 0 8px 24px rgba(0, 52, 89, 0.12);
+        }
+
+        html[data-theme="light"] .weather-day-card {
+            background: rgba(0, 52, 89, 0.04);
+            border: 1px solid rgba(0, 52, 89, 0.12);
+        }
+
+        html[data-theme="light"] .weather-day-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 52, 89, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .weather-card-header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .weather-current {
+                text-align: left;
+                align-items: flex-start;
+            }
+
+            .weather-day-card {
+                padding: 16px;
+                min-height: 180px;
+            }
+        }
+    </style>
+    
+<script>
+/* ==== FIX: GLOBAL PAGINATION STATE ==== */
+window.adminPagination = window.adminPagination || {
+    currentPage: 1,
+    pageSize: 10,
+    totalPages: 1
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        // Verify Chart.js is loaded
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                if (typeof Chart === 'undefined') {
+                    console.error('Chart.js failed to load');
+                    // Try alternative CDN
+                    const script = document.createElement('script');
+                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js';
+                    script.onload = function() {
+                        console.log('Chart.js loaded from alternative CDN');
+                    };
+                    script.onerror = function() {
+                        console.error('Both Chart.js CDNs failed to load');
+                    };
+                    document.head.appendChild(script);
+                } else {
+                    console.log('Chart.js loaded successfully');
+                }
+            }, 100);
+        });
+    </script>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-brand-area">
+                <div class="brand-icon">
+                    <img src="./Screenshot 2025-12-19 134046.png" alt="VoiceUp Logo" class="brand-logo">
+                </div>
+                <div class="brand-details">
+                    <span class="brand-title">VoiceUp</span>
+                    <span class="brand-subtitle">Admin Control</span>
+                </div>
+            </div>            
+
+            <div class="sidebar-user-card">
+                <div class="user-avatar" id="userAvatar">A</div>
+                <div class="user-meta">
+                    <div class="user-name" id="userName">Admin</div>
+                    <div class="user-email" id="adminEmail">admin@example.com</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <a href="./admin.html" class="nav-link active">
+                        <span class="nav-link-icon">📊</span>
+                        <span class="nav-link-text">Dashboard</span>
+                    </a>
+                    <a href="./admin-solved.html" class="nav-link nav-link-ghost">
+                        <span class="nav-link-icon">✅</span>
+                        <span class="nav-link-text">Solved Complaints</span>
+                    </a>
+                    <a href="./admin-analytics.html" class="nav-link nav-link-ghost">
+                        <span class="nav-link-icon">📈</span>
+                        <span class="nav-link-text">Analytics</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-support">
+                    <div class="support-icon">ℹ️</div>
+                    <div class="support-copy">
+                        Need help?<br>
+                        <a href="mailto:ireportph.help@gmail.com">Contact support</a>
+                    </div>
+                </div>
+                <button class="sidebar-footer-btn" id="logoutBtn">
+                    Log out
+                </button>
+            </div>
+        </aside>
+        <main class="content">
+            <div class="container">
+                <!-- Dashboard Header -->
+                <div class="dashboard-header">
+                    <div class="dashboard-header-text">
+                        <h1>Welcome back!</h1>
+                        <p id="adminWelcome">Loading...</p>
+                    </div>
+                    <button id="adminThemeToggle" class="theme-toggle-btn" aria-label="Switch theme">
+                        <span class="toggle-icon">🌙</span>
+                        <span class="toggle-label">Dark mode</span>
+                    </button>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="stats-grid" id="statGrid">
+                    <div class="stat-card gradient-total">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Total Complaints</span>
+                            <span class="stat-card-icon">📊</span>
+                        </div>
+                        <div class="stat-value" id="statTotal">0</div>
+                        <div class="stat-card-subtext">All time submissions</div>
+                    </div>
+                    <div class="stat-card gradient-pending">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Pending</span>
+                            <span class="stat-card-icon">⏱️</span>
+                        </div>
+                        <div class="stat-value" id="statPending">0</div>
+                        <div class="stat-card-subtext">Waiting for review</div>
+                    </div>
+                    <div class="stat-card gradient-progress">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">In Progress</span>
+                            <span class="stat-card-icon">🚧</span>
+                        </div>
+                        <div class="stat-value" id="statInProgress">0</div>
+                        <div class="stat-card-subtext">Currently handled</div>
+                    </div>
+                    <div class="stat-card gradient-resolved">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Resolved</span>
+                            <span class="stat-card-icon">✅</span>
+                        </div>
+                        <div class="stat-value" id="statResolved">0</div>
+                        <div class="stat-card-subtext">Completed successfully</div>
+                    </div>
+                    <div class="stat-card gradient-rejected">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Rejected</span>
+                            <span class="stat-card-icon">⚠️</span>
+                        </div>
+                        <div class="stat-value" id="statRejected">0</div>
+                        <div class="stat-card-subtext">Not approved</div>
+                    </div>
+                    <!-- Weather Forecast Card (7-Day) - Spans remaining space -->
+                    <div class="stat-card gradient-weather weather-forecast-inline">
+                        <div class="weather-inline-header">
+                            <div class="weather-inline-title-section">
+                                <div class="weather-inline-title">7-Day Weather Forecast</div>
+                                <div class="weather-location-row">
+                                    <div class="weather-inline-location" id="weatherLocation">Manila, Philippines</div>
+                                    <button class="weather-location-btn" id="weatherLocationBtn" title="Change location">📍</button>
+                                </div>
+                            </div>
+                            <div class="weather-inline-current">
+                                <div class="weather-inline-icon" id="weatherIcon">🌤️</div>
+                                <div class="weather-inline-temp" id="weatherTemp">--°C</div>
+                                <div class="weather-inline-desc" id="weatherDesc">Loading...</div>
+                            </div>
+                        </div>
+                        <div class="weather-forecast-scroll-wrapper">
+                            <div class="weather-forecast-grid-inline" id="weatherForecastGrid">
+                                <div class="weather-day-placeholder">Loading forecast...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Weather Location Modal -->
+                    <div class="weather-location-modal" id="weatherLocationModal">
+                        <div class="weather-location-modal-content">
+                            <div class="weather-location-modal-header">
+                                <h3>Change Weather Location</h3>
+                                <button class="weather-location-modal-close" id="weatherLocationModalClose">&times;</button>
+                            </div>
+                            <div class="weather-location-modal-body">
+                                <label for="weatherLocationInput">Enter city name (e.g., Manila, Quezon City, Cebu)</label>
+                                <input type="text" id="weatherLocationInput" placeholder="Manila" class="weather-location-input">
+                                <div class="weather-location-examples">
+                                    <span>Examples:</span>
+                                    <button class="weather-location-example" data-city="Manila" data-country="PH">Manila</button>
+                                    <button class="weather-location-example" data-city="Quezon City" data-country="PH">Quezon City</button>
+                                    <button class="weather-location-example" data-city="Cebu" data-country="PH">Cebu</button>
+                                    <button class="weather-location-example" data-city="Davao" data-country="PH">Davao</button>
+                                </div>
+                            </div>
+                            <div class="weather-location-modal-footer">
+                                <button class="weather-location-save-btn" id="weatherLocationSave">Save Location</button>
+                                <button class="weather-location-cancel-btn" id="weatherLocationCancel">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Cards -->
+                <div class="analytics-cards-grid">
+                    <div class="analytics-card">
+                        <div class="analytics-card-header">
+                            <span class="analytics-card-title">Complaints Over Time</span>
+                            <span class="analytics-card-icon">📈</span>
+                        </div>
+                        <div class="analytics-card-subtext">Trend of complaints submitted</div>
+                        <div class="analytics-chart-wrapper">
+                            <canvas id="dashboardTimeChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-card-header">
+                            <span class="analytics-card-title">Status Distribution</span>
+                            <span class="analytics-card-icon">📊</span>
+                        </div>
+                        <div class="analytics-card-subtext">Breakdown by status</div>
+                        <div class="analytics-chart-wrapper">
+                            <canvas id="dashboardStatusChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            <div class="card">
+                <div class="toolbar">
+                    <div class="filters">
+                        <button class="btn" data-status="all">All</button>
+                        <button class="btn" data-status="pending">Pending</button>
+                        <button class="btn" data-status="in_progress">In Progress</button>
+                        <button class="btn" data-status="resolved">Resolved</button>
+                        <button class="btn" data-status="rejected">Rejected</button>
+                    </div>
+                </div>
+                <div id="complaintsGrid" class="admin-complaints-grid">
+                    <!-- Cards will be injected here -->
+                </div>
+            </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="./firebase-config.js"></script>
+    <script type="module">
+        import { onAuthChange, logoutUser, isAdmin } from './auth.js';
+        import { getAllComplaints, updateComplaintStatus, deleteComplaint } from './admin-dashboard.js';
+        import { USE_CLOUDINARY, CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET, CLOUDINARY_FOLDER } from './media-config.js';
+        import { db, storage } from './firebase-config.js';
+        import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
+        import { ref as dbRef, update as dbUpdate } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
+
+        const adminWelcome = document.getElementById('adminWelcome');
+        const complaintsGrid = document.getElementById('complaintsGrid');
+        const adminEmail = document.getElementById('adminEmail');
+        const userName = document.getElementById('userName');
+        const userAvatar = document.getElementById('userAvatar');
+        const stats = {
+            total: document.getElementById('statTotal'),
+            pending: document.getElementById('statPending'),
+            in_progress: document.getElementById('statInProgress'),
+            resolved: document.getElementById('statResolved'),
+            rejected: document.getElementById('statRejected'),
+        };
+        const logoutBtn = document.getElementById('logoutBtn');
+        const filterButtons = document.querySelectorAll('.filters .btn');
+        const statusButtons = [...filterButtons];
+        const adminThemeToggle = document.getElementById('adminThemeToggle');
+
+        const THEME_STORAGE_KEY = 'ireport-theme';
+        const themeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        let adminThemeLocked = false;
+
+        let allComplaints = [];
+        let currentPage = 1;
+        const PAGE_SIZE = 6;
+
+        initializeThemeControls();
+
+        function initializeThemeControls() {
+            const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+            const prefersDark = themeMediaQuery.matches;
+
+            adminThemeLocked = !!storedTheme;
+            const initialTheme = storedTheme || (prefersDark ? 'dark' : 'light');
+            applyTheme(initialTheme, adminThemeLocked);
+
+            if (adminThemeToggle) {
+                adminThemeToggle.addEventListener('click', () => {
+                    const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+                    const nextTheme = current === 'light' ? 'dark' : 'light';
+                    adminThemeLocked = true;
+                    applyTheme(nextTheme, true);
+                });
+            }
+
+            themeMediaQuery.addEventListener('change', event => {
+                if (!adminThemeLocked) {
+                    applyTheme(event.matches ? 'dark' : 'light', false);
+                }
+            });
+        }
+
+        function applyTheme(theme, persistSelection) {
+            if (theme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                theme = 'dark';
+            }
+
+            if (persistSelection) {
+                localStorage.setItem(THEME_STORAGE_KEY, theme);
+            } else {
+                localStorage.removeItem(THEME_STORAGE_KEY);
+            }
+
+            updateThemeToggle(theme);
+            // Update charts when theme changes (non-blocking)
+            try {
+                if (allComplaints.length > 0 && typeof Chart !== 'undefined') {
+                    updateDashboardCharts(allComplaints);
+                }
+            } catch (error) {
+                console.error('Error updating charts on theme change:', error);
+                // Don't let chart errors affect theme switching
+            }
+        }
+
+        function updateThemeToggle(theme) {
+            if (!adminThemeToggle) return;
+            const isLight = theme === 'light';
+            const iconEl = adminThemeToggle.querySelector('.toggle-icon');
+            const labelEl = adminThemeToggle.querySelector('.toggle-label');
+            if (iconEl) iconEl.textContent = isLight ? '🌙' : '☀️';
+            if (labelEl) labelEl.textContent = isLight ? 'Dark mode' : 'Light mode';
+            adminThemeToggle.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+        }
+        // Hidden file input for admin proofs
+        const adminProofInput = document.createElement('input');
+        adminProofInput.type = 'file';
+        adminProofInput.accept = 'image/*';
+        adminProofInput.style.display = 'none';
+        document.body.appendChild(adminProofInput);
+
+        // Encode image to compressed Data URL (quick inline preview)
+        async function encodeImageToDataUrl(file, { maxWidth = 900, maxHeight = 900, quality = 0.72, maxBytes = 350000 } = {}) {
+            const dataUrl = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+            const img = await new Promise((resolve, reject) => {
+                const i = new Image();
+                i.onload = () => resolve(i);
+                i.onerror = reject;
+                i.src = dataUrl;
+            });
+            const ratio = Math.min(1, maxWidth / img.width, maxHeight / img.height);
+            const w = Math.max(1, Math.floor(img.width * ratio));
+            const h = Math.max(1, Math.floor(img.height * ratio));
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            let q = quality;
+            let out = canvas.toDataURL('image/jpeg', q);
+            while (out.length * 0.75 > maxBytes && q > 0.4) {
+                q -= 0.08;
+                out = canvas.toDataURL('image/jpeg', q);
+            }
+            return out;
+        }
+
+        let currentFilter = 'all';
+        let unsubscribeAll = null;
+        let dashboardTimeChart = null;
+        let dashboardStatusChart = null;
+
+        // Weather API Configuration
+        const WEATHER_API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your OpenWeatherMap API key
+        
+        // Weather Location Storage
+        const WEATHER_LOCATION_KEY = 'weather_location_admin';
+        
+        // Get saved location or use default
+        function getWeatherLocation() {
+            const saved = localStorage.getItem(WEATHER_LOCATION_KEY);
+            if (saved) {
+                try {
+                    return JSON.parse(saved);
+                } catch (e) {
+                    console.error('Error parsing saved location:', e);
+                }
+            }
+            return { city: 'Manila', country: 'PH', lat: 14.5995, lon: 120.9842 };
+        }
+        
+        // Save location
+        function saveWeatherLocation(location) {
+            localStorage.setItem(WEATHER_LOCATION_KEY, JSON.stringify(location));
+        }
+        
+        let currentWeatherLocation = getWeatherLocation();
+
+        // Fetch 7-day weather forecast
+        async function fetchWeather() {
+            try {
+                const apiKey = WEATHER_API_KEY;
+                // Always get fresh location data
+                const location = getWeatherLocation();
+                
+                if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
+                    // Fallback: Show demo data
+                    updateWeatherDisplayDemo();
+                    return;
+                }
+
+                // Fetch current weather using city name
+                const currentUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location.city)},${location.country}&appid=${apiKey}&units=metric`;
+                const currentResponse = await fetch(currentUrl);
+                
+                if (currentResponse.ok) {
+                    const currentData = await currentResponse.json();
+                    const weatherIcon = getWeatherIcon(currentData.weather[0].main, currentData.weather[0].icon);
+                    
+                    // Update saved coordinates if we got them from API
+                    const updatedLocation = {
+                        city: currentData.name,
+                        country: currentData.sys.country,
+                        lat: currentData.coord.lat,
+                        lon: currentData.coord.lon
+                    };
+                    saveWeatherLocation(updatedLocation);
+                    currentWeatherLocation = updatedLocation;
+                    
+                    updateWeatherCurrent({
+                        temp: Math.round(currentData.main.temp),
+                        description: currentData.weather[0].description.charAt(0).toUpperCase() + currentData.weather[0].description.slice(1),
+                        icon: weatherIcon,
+                        location: `${currentData.name}, ${currentData.sys.country}`
+                    });
+                    
+                    // Fetch 7-day forecast using the updated coordinates
+                    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${updatedLocation.lat}&lon=${updatedLocation.lon}&appid=${apiKey}&units=metric&cnt=40`;
+                    const forecastResponse = await fetch(forecastUrl);
+                    
+                    if (!forecastResponse.ok) throw new Error('Forecast API error');
+                    
+                    const forecastData = await forecastResponse.json();
+                    updateWeatherForecast(forecastData);
+                } else {
+                    throw new Error('Current weather API error');
+                }
+                
+            } catch (error) {
+                console.error('Error fetching weather:', error);
+                updateWeatherDisplayDemo();
+            }
+        }
+
+        function updateWeatherCurrent(weather) {
+            const tempEl = document.getElementById('weatherTemp');
+            const descEl = document.getElementById('weatherDesc');
+            const iconEl = document.getElementById('weatherIcon');
+            const locationEl = document.getElementById('weatherLocation');
+            
+            if (tempEl) tempEl.textContent = `${weather.temp}°C`;
+            if (descEl) descEl.textContent = weather.description;
+            if (iconEl) iconEl.textContent = weather.icon;
+            if (locationEl) locationEl.textContent = weather.location;
+        }
+
+        function updateWeatherForecast(data) {
+            const forecastGrid = document.getElementById('weatherForecastGrid');
+            if (!forecastGrid) return;
+
+            // Group forecasts by day and calculate min/max temps
+            const dailyForecasts = {};
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            data.list.forEach(item => {
+                const date = new Date(item.dt * 1000);
+                const dateKey = date.toDateString();
+                
+                if (!dailyForecasts[dateKey]) {
+                    dailyForecasts[dateKey] = {
+                        items: [],
+                        minTemp: item.main.temp_min,
+                        maxTemp: item.main.temp_max
+                    };
+                }
+                
+                dailyForecasts[dateKey].items.push(item);
+                dailyForecasts[dateKey].minTemp = Math.min(dailyForecasts[dateKey].minTemp, item.main.temp_min);
+                dailyForecasts[dateKey].maxTemp = Math.max(dailyForecasts[dateKey].maxTemp, item.main.temp_max);
+            });
+
+            // Get next 7 days
+            const forecastDays = [];
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(today);
+                day.setDate(today.getDate() + i);
+                const dayKey = day.toDateString();
+                
+                if (dailyForecasts[dayKey] && dailyForecasts[dayKey].items.length > 0) {
+                    // Get the forecast closest to noon (12:00)
+                    const items = dailyForecasts[dayKey].items;
+                    let bestItem = items[0];
+                    let bestHourDiff = Math.abs(new Date(bestItem.dt * 1000).getHours() - 12);
+                    
+                    items.forEach(item => {
+                        const hour = new Date(item.dt * 1000).getHours();
+                        const hourDiff = Math.abs(hour - 12);
+                        if (hourDiff < bestHourDiff) {
+                            bestHourDiff = hourDiff;
+                            bestItem = item;
+                        }
+                    });
+                    
+                    const weatherIcon = getWeatherIcon(bestItem.weather[0].main, bestItem.weather[0].icon);
+                    forecastDays.push({
+                        date: day,
+                        temp: Math.round(bestItem.main.temp),
+                        minTemp: Math.round(dailyForecasts[dayKey].minTemp),
+                        maxTemp: Math.round(dailyForecasts[dayKey].maxTemp),
+                        description: bestItem.weather[0].description,
+                        icon: weatherIcon,
+                        dayName: i === 0 ? 'Today' : day.toLocaleDateString('en-US', { weekday: 'short' })
+                    });
+                }
+            }
+
+            // Render forecast (using inline styles for stats grid)
+            if (forecastDays.length > 0) {
+                forecastGrid.innerHTML = forecastDays.map(day => `
+                    <div class="weather-day-card-inline">
+                        <div class="weather-day-name-inline">${day.dayName}</div>
+                        <div class="weather-day-date-inline">${day.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+                        <div class="weather-day-icon-inline">${day.icon}</div>
+                        <div class="weather-day-temp-inline">
+                            <span class="temp-high-inline">${day.maxTemp}°</span>
+                            <span class="temp-low-inline">${day.minTemp}°</span>
+                        </div>
+                        <div class="weather-day-desc-inline">${day.description}</div>
+                    </div>
+                `).join('');
+            } else {
+                forecastGrid.innerHTML = '<div class="weather-day-placeholder">No forecast data available</div>';
+            }
+        }
+
+        function updateWeatherDisplayDemo() {
+            const today = new Date();
+            const demoForecasts = [];
+            
+            // Generate slightly varied demo data based on location (for visual variety)
+            const baseTemp = 28;
+            const location = currentWeatherLocation;
+            const cityHash = location.city.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            const tempVariation = (cityHash % 5) - 2; // -2 to +2 variation
+            
+            const temps = [
+                baseTemp + tempVariation,
+                baseTemp + tempVariation + 2,
+                baseTemp + tempVariation + 1,
+                baseTemp + tempVariation + 3,
+                baseTemp + tempVariation - 1,
+                baseTemp + tempVariation + 1,
+                baseTemp + tempVariation + 2
+            ];
+            const icons = ['☀️', '⛅', '🌤️', '⛅', '🌧️', '⛅', '☀️'];
+            const descs = ['Sunny', 'Partly Cloudy', 'Mostly Sunny', 'Cloudy', 'Rainy', 'Partly Cloudy', 'Sunny'];
+            
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(today);
+                day.setDate(today.getDate() + i);
+                
+                demoForecasts.push({
+                    date: day,
+                    temp: temps[i],
+                    minTemp: temps[i] - 3,
+                    maxTemp: temps[i] + 2,
+                    description: descs[i],
+                    icon: icons[i],
+                    dayName: i === 0 ? 'Today' : day.toLocaleDateString('en-US', { weekday: 'short' })
+                });
+            }
+
+            updateWeatherCurrent({
+                temp: baseTemp + tempVariation,
+                description: 'Partly Cloudy',
+                icon: '⛅',
+                location: `${location.city}, Philippines`
+            });
+
+            const forecastGrid = document.getElementById('weatherForecastGrid');
+            if (forecastGrid) {
+                forecastGrid.innerHTML = demoForecasts.map(day => `
+                    <div class="weather-day-card-inline">
+                        <div class="weather-day-name-inline">${day.dayName}</div>
+                        <div class="weather-day-date-inline">${day.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+                        <div class="weather-day-icon-inline">${day.icon}</div>
+                        <div class="weather-day-temp-inline">
+                            <span class="temp-high-inline">${day.maxTemp}°</span>
+                            <span class="temp-low-inline">${day.minTemp}°</span>
+                        </div>
+                        <div class="weather-day-desc-inline">${day.description}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Ensure location is reloaded when page loads
+        function refreshWeatherLocation() {
+            currentWeatherLocation = getWeatherLocation();
+        }
+
+        function getWeatherIcon(main, iconCode) {
+            const iconMap = {
+                'Clear': '☀️',
+                'Clouds': iconCode && iconCode.includes('d') ? '⛅' : '☁️',
+                'Rain': '🌧️',
+                'Drizzle': '🌦️',
+                'Thunderstorm': '⛈️',
+                'Snow': '❄️',
+                'Mist': '🌫️',
+                'Fog': '🌫️',
+                'Haze': '🌫️'
+            };
+            return iconMap[main] || '🌤️';
+        }
+
+        // Setup weather location selector
+        function setupWeatherLocationSelector() {
+            const locationBtn = document.getElementById('weatherLocationBtn');
+            const locationModal = document.getElementById('weatherLocationModal');
+            const locationModalClose = document.getElementById('weatherLocationModalClose');
+            const locationInput = document.getElementById('weatherLocationInput');
+            const locationSave = document.getElementById('weatherLocationSave');
+            const locationCancel = document.getElementById('weatherLocationCancel');
+            const locationExamples = document.querySelectorAll('.weather-location-example');
+
+            if (!locationBtn || !locationModal) return;
+
+            // Open modal
+            locationBtn.addEventListener('click', () => {
+                locationModal.style.display = 'flex';
+                locationInput.value = currentWeatherLocation.city;
+                locationInput.focus();
+            });
+
+            // Close modal
+            const closeModal = () => {
+                locationModal.style.display = 'none';
+            };
+
+            locationModalClose.addEventListener('click', closeModal);
+            locationCancel.addEventListener('click', closeModal);
+
+            // Close on outside click
+            locationModal.addEventListener('click', (e) => {
+                if (e.target === locationModal) {
+                    closeModal();
+                }
+            });
+
+            // Save location
+            locationSave.addEventListener('click', async () => {
+                const cityName = locationInput.value.trim();
+                if (!cityName) {
+                    alert('Please enter a city name');
+                    return;
+                }
+
+                try {
+                    // Try to get coordinates for the city
+                    const apiKey = WEATHER_API_KEY;
+                    if (apiKey && apiKey !== 'YOUR_API_KEY_HERE') {
+                        const geocodeUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(cityName)},PH&appid=${apiKey}`;
+                        const response = await fetch(geocodeUrl);
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            currentWeatherLocation = {
+                                city: data.name,
+                                country: data.sys.country,
+                                lat: data.coord.lat,
+                                lon: data.coord.lon
+                            };
+                            saveWeatherLocation(currentWeatherLocation);
+                            closeModal();
+                            // Force refresh location and fetch weather
+                            refreshWeatherLocation();
+                            fetchWeather(); // Refresh weather
+                        } else {
+                            // Fallback: use city name only
+                            currentWeatherLocation = {
+                                city: cityName,
+                                country: 'PH',
+                                lat: currentWeatherLocation.lat,
+                                lon: currentWeatherLocation.lon
+                            };
+                            saveWeatherLocation(currentWeatherLocation);
+                            closeModal();
+                            // Force refresh location and fetch weather
+                            refreshWeatherLocation();
+                            fetchWeather();
+                        }
+                    } else {
+                        // Demo mode: just save the city name
+                        currentWeatherLocation = {
+                            city: cityName,
+                            country: 'PH',
+                            lat: currentWeatherLocation.lat,
+                            lon: currentWeatherLocation.lon
+                        };
+                        saveWeatherLocation(currentWeatherLocation);
+                        closeModal();
+                        updateWeatherDisplayDemo();
+                    }
+                } catch (error) {
+                    console.error('Error setting location:', error);
+                    alert('Error setting location. Please try again.');
+                }
+            });
+
+            // Example buttons
+            locationExamples.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    locationInput.value = btn.dataset.city;
+                });
+            });
+
+            // Enter key to save
+            locationInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    locationSave.click();
+                }
+            });
+        }
+
+        onAuthChange(async (user) => {
+            if (!user) {
+                window.location.href = 'Login.html';
+                return;
+            }
+            const ok = await isAdmin();
+            if (!ok) {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+            const email = user.email || '';
+            const displayName = user.displayName || 'Admin';
+            adminEmail.textContent = email || displayName;
+            userName.textContent = displayName;
+            userAvatar.textContent = (displayName || email || 'A').charAt(0).toUpperCase();
+            adminWelcome.textContent = `Welcome, ${displayName}! Here's an overview of all complaints.`;
+            
+            // Fetch weather data
+            fetchWeather();
+            // Refresh weather every 30 minutes
+            setInterval(fetchWeather, 30 * 60 * 1000);
+            
+            // Setup weather location selector
+            setupWeatherLocationSelector();
+            
+            // Subscribe to all complaints
+            unsubscribeAll = getAllComplaints((list) => {
+                allComplaints = list;
+                updateStats();
+                render();
+                // Update charts after DOM is ready (non-blocking, don't affect main functionality)
+                setTimeout(() => {
+                    try {
+                        if (typeof Chart !== 'undefined') {
+                            updateDashboardCharts(allComplaints);
+                        }
+                    } catch (error) {
+                        console.error('Error updating charts:', error);
+                        // Don't let chart errors affect the dashboard
+                    }
+                }, 300);
+            });
+        });
+
+        logoutBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                if (typeof unsubscribeAll === 'function') {
+                    try { unsubscribeAll(); } catch (_) {}
+                    unsubscribeAll = null;
+                }
+                const r = await logoutUser();
+                if (r.success) {
+                    window.location.href = 'Login.html';
+                } else {
+                    alert(r.error || 'Logout failed. Please try again.');
+                }
+            } catch (err) {
+                console.error('Logout error:', err);
+                alert('An error occurred during logout.');
+            }
+        });
+
+        statusButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const status = btn.dataset.status || 'all';
+                setActiveStatus(status);
+            });
+        });
+
+        function setActiveStatus(status) {
+            currentFilter = status;
+            filterButtons.forEach(b => b.classList.toggle('primary', b.dataset.status === status));
+            currentPage = 1;
+            render();
+        }
+
+        setActiveStatus('all');
+
+        function updateStats() {
+            const total = allComplaints.length;
+            const pending = allComplaints.filter(c => c.status === 'pending').length;
+            const ip = allComplaints.filter(c => c.status === 'in_progress').length;
+            const res = allComplaints.filter(c => c.status === 'resolved').length;
+            const rej = allComplaints.filter(c => c.status === 'rejected').length;
+            stats.total.textContent = total;
+            stats.pending.textContent = pending;
+            stats.in_progress.textContent = ip;
+            stats.resolved.textContent = res;
+            stats.rejected.textContent = rej;
+
+            // Update Analytics Charts (non-blocking)
+            try {
+                if (typeof Chart !== 'undefined') {
+                    updateDashboardCharts(allComplaints);
+                }
+            } catch (error) {
+                console.error('Error updating charts:', error);
+                // Don't let chart errors affect the dashboard
+            }
+        }
+
+        function getThemeColors() {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            return {
+                text: isLight ? '#003459' : '#f8fafc',
+                muted: isLight ? '#577089' : '#a5b4cb',
+                grid: isLight ? 'rgba(0, 52, 89, 0.1)' : 'rgba(148, 163, 184, 0.1)',
+                background: isLight ? '#ffffff' : '#141b2d'
+            };
+        }
+
+        function updateDashboardCharts(complaints) {
+            // Check if Chart.js is loaded - fail silently if not available
+            if (typeof Chart === 'undefined') {
+                return; // Silently return, don't log error to avoid console spam
+            }
+
+            // Ensure complaints is an array
+            if (!Array.isArray(complaints)) {
+                return;
+            }
+
+            try {
+                const colors = getThemeColors();
+                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+
+            // Complaints Over Time Chart
+            const timeData = getTimeSeriesData(complaints);
+            const timeCanvas = document.getElementById('dashboardTimeChart');
+            if (!timeCanvas) {
+                console.error('dashboardTimeChart canvas not found');
+                return;
+            }
+            
+            try {
+                if (dashboardTimeChart) {
+                    dashboardTimeChart.destroy();
+                    dashboardTimeChart = null;
+                }
+                
+                const timeCtx = timeCanvas.getContext('2d');
+                if (!timeCtx) {
+                    console.error('Could not get 2d context for time chart');
+                    return;
+                }
+
+                dashboardTimeChart = new Chart(timeCtx, {
+                    type: 'line',
+                    data: {
+                        labels: timeData.labels,
+                        datasets: [{
+                            label: 'Complaints',
+                            data: timeData.values,
+                            borderColor: isLight ? '#007ea7' : '#6366f1',
+                            backgroundColor: isLight ? 'rgba(0, 126, 167, 0.1)' : 'rgba(99, 102, 241, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 750
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                enabled: true,
+                                backgroundColor: isLight ? 'rgba(0, 52, 89, 0.9)' : 'rgba(20, 27, 45, 0.9)',
+                                titleColor: colors.text,
+                                bodyColor: colors.text,
+                                borderColor: colors.grid,
+                                borderWidth: 1
+                            }
+                        },
+                        scales: {
+                            x: { 
+                                ticks: { color: colors.muted, font: { size: 10 } }, 
+                                grid: { color: colors.grid, display: false }
+                            },
+                            y: { 
+                                ticks: { color: colors.muted, font: { size: 10 } }, 
+                                grid: { color: colors.grid },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+                // Chart created successfully
+            } catch (error) {
+                console.error('Error creating time chart (non-critical):', error);
+                // Don't replace canvas content, just log error - dashboard should work without charts
+            }
+
+            // Status Distribution Chart
+            const statusData = getStatusData(complaints);
+            const statusCanvas = document.getElementById('dashboardStatusChart');
+            if (!statusCanvas) {
+                console.error('dashboardStatusChart canvas not found');
+                return;
+            }
+            
+            try {
+                if (dashboardStatusChart) {
+                    dashboardStatusChart.destroy();
+                    dashboardStatusChart = null;
+                }
+                
+                const statusCtx = statusCanvas.getContext('2d');
+                if (!statusCtx) {
+                    console.error('Could not get 2d context for status chart');
+                    return;
+                }
+
+                dashboardStatusChart = new Chart(statusCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: statusData.labels,
+                        datasets: [{
+                            data: statusData.values,
+                            backgroundColor: [
+                                isLight ? 'rgba(250, 204, 21, 0.8)' : 'rgba(250, 204, 21, 0.6)',
+                                isLight ? 'rgba(0, 112, 192, 0.8)' : 'rgba(56, 189, 248, 0.6)',
+                                isLight ? 'rgba(34, 197, 94, 0.8)' : 'rgba(34, 197, 94, 0.6)',
+                                isLight ? 'rgba(248, 113, 113, 0.8)' : 'rgba(248, 113, 113, 0.6)'
+                            ],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            animateRotate: true,
+                            duration: 750
+                        },
+                        plugins: {
+                            legend: { 
+                                position: 'bottom', 
+                                labels: { 
+                                    color: colors.text, 
+                                    padding: 10,
+                                    font: { size: 11 },
+                                    usePointStyle: true
+                                } 
+                            },
+                            tooltip: {
+                                enabled: true,
+                                backgroundColor: isLight ? 'rgba(0, 52, 89, 0.9)' : 'rgba(20, 27, 45, 0.9)',
+                                titleColor: colors.text,
+                                bodyColor: colors.text,
+                                borderColor: colors.grid,
+                                borderWidth: 1
+                            }
+                        }
+                    }
+                });
+                // Chart created successfully
+            } catch (error) {
+                console.error('Error creating status chart (non-critical):', error);
+                // Don't replace canvas content, just log error - dashboard should work without charts
+            }
+            } catch (error) {
+                console.error('Error in updateDashboardCharts (non-critical):', error);
+                // Don't let chart errors propagate - dashboard should work without charts
+            }
+        }
+
+        function getTimeSeriesData(complaints) {
+            const now = Date.now();
+            const days = 7; // Last 7 days
+            const labels = [];
+            const values = [];
+            const buckets = {};
+
+            for (let i = days - 1; i >= 0; i--) {
+                const date = new Date(now - i * 24 * 60 * 60 * 1000);
+                const key = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                labels.push(key);
+                buckets[key] = 0;
+            }
+
+            // Count complaints for each day
+            complaints.forEach(c => {
+                if (c.createdAt) {
+                    const complaintDate = new Date(c.createdAt);
+                    const key = complaintDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    if (buckets.hasOwnProperty(key)) {
+                        buckets[key]++;
+                    }
+                }
+            });
+
+            labels.forEach(label => {
+                values.push(buckets[label] || 0);
+            });
+
+            return { labels, values };
+        }
+
+        function getStatusData(complaints) {
+            const statuses = ['pending', 'in_progress', 'resolved', 'rejected'];
+            const counts = { pending: 0, in_progress: 0, resolved: 0, rejected: 0 };
+            
+            complaints.forEach(c => {
+                const status = c.status || 'pending';
+                if (counts[status] !== undefined) {
+                    counts[status]++;
+                }
+            });
+
+            return {
+                labels: ['Pending', 'In Progress', 'Resolved', 'Rejected'],
+                values: [counts.pending, counts.in_progress, counts.resolved, counts.rejected]
+            };
+        }
+
+        function filtered() {
+            if (currentFilter === 'all') return allComplaints;
+            return allComplaints.filter(c => c.status === currentFilter);
+        }
+
+        function getPagedComplaints() {
+            const list = filtered();
+            const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+            currentPage = Math.min(currentPage, totalPages);
+            const start = (currentPage - 1) * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            return { pageItems: list.slice(start, end), totalPages, totalItems: list.length };
+        }
+
+        function render() {
+            const { pageItems, totalPages, totalItems } = getPagedComplaints();
+
+            const cards = pageItems.map(c => {
+                const url = c.fileURL && String(c.fileURL).trim()
+                    ? c.fileURL
+                    : (c.inlineImage && String(c.inlineImage).startsWith('data:image') ? c.inlineImage : '');
+                const hasMedia = !!url;
+                const isVideo = hasMedia && url.match(/\.(mp4|webm|ogg|mov|avi)$/i);
+                const statusClass = (c.status || 'pending').replace('-', '_');
+                const priorityClass = (c.priority || 'medium').toLowerCase();
+
+                return `
+                <div class="admin-complaint-card">
+                    ${hasMedia ? `
+                        <div class="card-cover">
+                            ${isVideo ? `
+                                <video src="${url}" controls></video>
+                            ` : `
+                                <img src="${url}" alt="media" loading="lazy" onclick="event.stopPropagation(); window.openAdminPreview('${url}', false)"
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27380%27 height=%27200%27%3E%3Crect width=%27380%27 height=%27200%27 fill=%27%23f4f6fb%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 fill=%27%2399a%27 font-size=%2714%27 font-family=%27Arial%27 text-anchor=%27middle%27 dy=%27.3em%27%3ENo media%3C/text%3E%3C/svg%3E';">
+                            `}
+                        </div>
+                    ` : `
+                        <div class="card-cover card-cover-empty">No media</div>
+                    `}
+                    <div class="card-body">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <div class="card-title">${c.title || 'Untitled Complaint'}</div>
+                                <div class="card-meta-row">
+                                    <span class="card-chip category-chip">${c.category || 'Uncategorized'}</span>
+                                    <span class="card-chip priority-chip ${priorityClass}">${c.priority || 'medium'}</span>
+                                </div>
+                            </div>
+                            <span class="status-chip ${statusClass}">${(c.status || 'pending').replace('_',' ')}</span>
+                        </div>
+
+                        <div class="card-location">📍 ${c.location || 'Location not specified'}</div>
+
+                        <div class="card-description">
+                            <div class="card-description-text" data-desc="${c.id}">${c.description || 'No description provided.'}</div>
+                            ${(c.description && c.description.length > 220) ? `<button class="desc-toggle" data-desc-toggle="${c.id}" onclick="event.stopPropagation(); window.toggleDescription('${c.id}')">Show more</button>` : ''}
+                        </div>
+
+                        ${(c.progressProofURL || c.resolvedProofURL || c.rejectedProofURL || c.progressProofInline || c.resolvedProofInline || c.rejectedProofInline) ? `
+                            <div class="card-status-updates">
+                                <div class="card-status-label">Status Updates</div>
+                                <div class="card-status-list">
+                                    ${(c.progressProofURL || c.progressProofInline) ? `
+                                        <div class="status-pill in_progress">
+                                            <span>In Progress</span>
+                                            <img src="${c.progressProofURL || c.progressProofInline}" alt="In progress proof" onclick="event.stopPropagation(); window.openAdminPreview('${c.progressProofURL || c.progressProofInline}', false)">
+                                        </div>
+                                    ` : ''}
+                                    ${(c.resolvedProofURL || c.resolvedProofInline) ? `
+                                        <div class="status-pill resolved">
+                                            <span>Resolved</span>
+                                            <img src="${c.resolvedProofURL || c.resolvedProofInline}" alt="Resolved proof" onclick="event.stopPropagation(); window.openAdminPreview('${c.resolvedProofURL || c.resolvedProofInline}', false)">
+                                        </div>
+                                    ` : ''}
+                                    ${(c.rejectedProofURL || c.rejectedProofInline) ? `
+                                        <div class="status-pill rejected">
+                                            <span>Rejected</span>
+                                            <img src="${c.rejectedProofURL || c.rejectedProofInline}" alt="Rejected proof" onclick="event.stopPropagation(); window.openAdminPreview('${c.rejectedProofURL || c.rejectedProofInline}', false)">
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        ${c.adminNotes ? `
+                            <div class="admin-note">
+                                <strong>Admin Note:</strong> ${c.adminNotes}
+                            </div>
+                        ` : ''}
+
+                        <div class="card-footer">
+                            <div class="card-date">By: ${c.userId || 'Unknown'} • ${new Date(c.createdAt||0).toLocaleString()}</div>
+                            <div class="card-actions">
+                                <div class="status-actions">
+                                    <button class="btn btn-sm ${c.status === 'pending' ? 'primary' : ''}" onclick="event.stopPropagation(); window.adminSetStatus('${c.id}','pending')">Pending</button>
+                                    <button class="btn btn-sm ${c.status === 'in_progress' ? 'primary' : ''}" onclick="event.stopPropagation(); window.adminSetStatus('${c.id}','in_progress')">In Progress</button>
+                                    <button class="btn btn-sm ${c.status === 'resolved' ? 'primary' : ''}" onclick="event.stopPropagation(); window.adminSetStatus('${c.id}','resolved')">Resolved</button>
+                                    <button class="btn btn-sm ${c.status === 'rejected' ? 'primary' : ''}" onclick="event.stopPropagation(); window.adminSetStatus('${c.id}','rejected')">Rejected</button>
+                                </div>
+                                <button class="btn btn-sm danger" onclick="event.stopPropagation(); window.adminDelete('${c.id}')">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+            complaintsGrid.innerHTML = cards || `<div style="text-align:center;color:var(--text-muted);padding:24px;">No complaints</div>`;
+
+            // Render pagination
+            if (totalItems > PAGE_SIZE) {
+                adminPagination.innerHTML = `
+                    <div class="pagination-wrap">
+                        <button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="window.adminPrevPage()">&larr; Prev</button>
+                        <span class="page-label">Page ${currentPage} of ${totalPages}</span>
+                        <button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="window.adminNextPage()">Next &rarr;</button>
+                    </div>
+                `;
+            } else {
+                adminPagination.innerHTML = '';
+            }
+        }
+
+        async function uploadAdminProof(file, complaintId, status) {
+            const field = status === 'resolved'
+                ? 'resolvedProofURL'
+                : status === 'rejected'
+                    ? 'rejectedProofURL'
+                    : 'progressProofURL';
+            const fieldInline = status === 'resolved'
+                ? 'resolvedProofInline'
+                : status === 'rejected'
+                    ? 'rejectedProofInline'
+                    : 'progressProofInline';
+            try {
+                // Save inline preview immediately
+                try {
+                    const inlineImage = await encodeImageToDataUrl(file);
+                    await dbUpdate(dbRef(db, `complaints/${complaintId}`), { [fieldInline]: inlineImage, updatedAt: Date.now() });
+                } catch (e) {
+                    console.warn('Inline preview generation failed:', e?.message || e);
+                }
+
+                if (USE_CLOUDINARY) {
+                    // Use same endpoint/flow as user uploads: "auto/upload" with optional folder
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+                    if (CLOUDINARY_FOLDER) formData.append('folder', `${CLOUDINARY_FOLDER}/admin/${complaintId}`);
+                    // Optional context, mirrors user submit path
+                    formData.append('context', `complaintId=${complaintId}`);
+                    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`, { method: 'POST', body: formData });
+                    if (!res.ok) throw new Error(`Cloudinary error ${res.status}`);
+                    const data = await res.json();
+                    const url = data.secure_url;
+                    await dbUpdate(dbRef(db, `complaints/${complaintId}`), { [field]: url, updatedAt: Date.now() });
+                    return url;
+                } else {
+                    const fileName = `complaints/${complaintId}/admin/${Date.now()}-${file.name}`;
+                    const sRef = storageRef(storage, fileName);
+                    await uploadBytes(sRef, file, { contentType: file.type || 'image/jpeg' });
+                    const url = await getDownloadURL(sRef);
+                    await dbUpdate(dbRef(db, `complaints/${complaintId}`), { [field]: url, updatedAt: Date.now() });
+                    return url;
+                }
+            } catch (e) {
+                console.error('Proof upload failed', e);
+                // Silent fallback: keep inline preview only; do not interrupt the admin
+                return null;
+            }
+        }
+
+        window.adminSetStatus = async (id, status) => {
+            const label = (status || '').replace('_', ' ');
+            const proceed = confirm(`Change status to "${label}"?`);
+            if (!proceed) return; // Respect cancel
+            const askProof = (status === 'in_progress' || status === 'resolved' || status === 'rejected') ? confirm('Attach a proof image?') : false;
+            let selectedFile = null;
+            if (askProof) {
+                selectedFile = await new Promise((resolve) => {
+                    const handler = () => {
+                        adminProofInput.removeEventListener('change', handler);
+                        resolve(adminProofInput.files && adminProofInput.files[0] ? adminProofInput.files[0] : null);
+                    };
+                    adminProofInput.value = '';
+                    adminProofInput.addEventListener('change', handler, { once: true });
+                    adminProofInput.click();
+                });
+                if (!selectedFile) {
+                    const cont = confirm('No file selected. Continue without proof?');
+                    if (!cont) return;
+                }
+            }
+
+            const note = prompt('Optional note (Cancel to abort):', '');
+            if (note === null) return; // Treat prompt cancel as abort
+            const r = await updateComplaintStatus(id, status, note.trim() ? note : null);
+            if (!r.success) alert(r.error || 'Failed to update');
+
+            // After status update, upload proof if provided and save URL
+            if (selectedFile) {
+                await uploadAdminProof(selectedFile, id, status);
+            }
+        };
+
+        window.adminDelete = async (id) => {
+            if (!confirm('Delete this complaint?')) return;
+            const r = await deleteComplaint(id);
+            if (!r.success) alert(r.error || 'Failed to delete');
+        };
+
+        // Media preview modal (matches user experience)
+        window.openAdminPreview = function(url, isVideo = false) {
+            try {
+                const modal = document.createElement('div');
+                modal.className = 'admin-modal';
+                modal.innerHTML = `
+                    <div class="admin-modal-overlay" onclick="window.closeAdminPreview()"></div>
+                    <div class="admin-modal-content">
+                        <button class="admin-modal-close" onclick="window.closeAdminPreview()">×</button>
+                        <div class="admin-modal-body">
+                            ${isVideo ? `
+                                <video src="${url}" controls autoplay style="width:100%;max-height:80vh;"></video>
+                            ` : `
+                                <img src="${url}" alt="Preview" style="width:100%;max-height:80vh;object-fit:contain;">
+                            `}
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                document.body.style.overflow = 'hidden';
+                window.addEventListener('keydown', escHandler);
+                function escHandler(e){ if(e.key === 'Escape'){ window.closeAdminPreview(); } }
+                modal._escHandler = escHandler;
+            } catch (e) {
+                console.error('Preview error:', e);
+                window.open(url, '_blank');
+            }
+        };
+
+        window.closeAdminPreview = function() {
+            const modal = document.querySelector('.admin-modal');
+            if (modal) {
+                if (modal._escHandler) window.removeEventListener('keydown', modal._escHandler);
+                modal.remove();
+                document.body.style.overflow = '';
+            }
+        };
+
+        window.toggleDescription = function(id) {
+            try {
+                const desc = document.querySelector(`[data-desc="${id}"]`);
+                const btn = document.querySelector(`[data-desc-toggle="${id}"]`);
+                if (!desc || !btn) {
+                    console.warn('Toggle description: elements not found for id:', id);
+                    return;
+                }
+                const isExpanded = desc.classList.contains('expanded');
+                if (isExpanded) {
+                    desc.classList.remove('expanded');
+                    btn.textContent = 'Show more';
+                } else {
+                    desc.classList.add('expanded');
+                    btn.textContent = 'Show less';
+                }
+            } catch (error) {
+                console.error('Error toggling description:', error);
+            }
+        };
+
+        // pagination helpers
+        window.adminNextPage = function() {
+            const list = filtered();
+            const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+            if (currentPage < totalPages) {
+                currentPage += 1;
+                render();
+            }
+        };
+
+        window.adminPrevPage = function() {
+            if (currentPage > 1) {
+                currentPage -= 1;
+                render();
+            }
+        };
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iReportPH - Setup Admin</title>
+    <link rel="icon" type="image/png" href="./Screenshot 2025-12-19 134046.png 2025-12-19 134046.png">
+    <link rel="stylesheet" href="./style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .setup-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #1e3c72;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #1e3c72;
+        }
+
+        .current-user {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .current-user h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .current-user p {
+            color: #666;
+            font-size: 0.9rem;
+            margin: 5px 0;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .footer-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <h1>🔐 Setup Admin Account</h1>
+        <p class="subtitle">Make your current account an admin</p>
+
+        <div class="info-box">
+            <strong>⚠️ Important:</strong> You must be logged in with Google first. 
+            If you're not logged in, please go to the login page first.
+        </div>
+
+        <div id="currentUserInfo" class="current-user" style="display: none;">
+            <h3>Current User:</h3>
+            <p id="userEmail"></p>
+            <p id="userRole" style="font-weight: bold;"></p>
+        </div>
+
+        <button id="setAdminBtn" class="btn btn-primary" disabled>
+            Make Me Admin
+        </button>
+
+        <button id="checkStatusBtn" class="btn btn-secondary">
+            Check Admin Status
+        </button>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 10px; color: #666;">Processing...</p>
+        </div>
+
+        <div id="alertMessage" class="alert"></div>
+
+        <div class="footer-links">
+            <a href="./Login.html">← Back to Login</a>
+            <a href="./admin-login.html">Admin Login →</a>
+        </div>
+    </div>
+
+    <!-- Import Firebase config -->
+    <script type="module" src="./firebase-config.js"></script>
+    
+    <!-- Import auth functions -->
+    <script type="module">
+        import { onAuthChange, getCurrentUser, isAdmin, getUserRole } from './auth.js';
+        import { setCurrentUserAsAdmin } from './set-admin.js';
+
+        // Get DOM elements
+        const currentUserInfo = document.getElementById('currentUserInfo');
+        const userEmail = document.getElementById('userEmail');
+        const userRole = document.getElementById('userRole');
+        const setAdminBtn = document.getElementById('setAdminBtn');
+        const checkStatusBtn = document.getElementById('checkStatusBtn');
+        const loading = document.getElementById('loading');
+        const alertMessage = document.getElementById('alertMessage');
+
+        // Check authentication status
+        onAuthChange(async (user) => {
+            if (user) {
+                // User is logged in
+                const currentUser = getCurrentUser();
+                userEmail.textContent = `Email: ${currentUser.email || 'N/A'}`;
+                
+                // Check current role
+                const role = await getUserRole();
+                const adminStatus = await isAdmin();
+                
+                userRole.textContent = `Role: ${role} ${adminStatus ? '✅ (Admin)' : '❌ (Not Admin)'}`;
+                userRole.style.color = adminStatus ? '#28a745' : '#dc3545';
+                
+                currentUserInfo.style.display = 'block';
+                
+                // Enable/disable button based on admin status
+                if (adminStatus) {
+                    setAdminBtn.disabled = true;
+                    setAdminBtn.textContent = 'Already Admin ✅';
+                } else {
+                    setAdminBtn.disabled = false; // Enable button if not admin
+                    setAdminBtn.textContent = 'Make Me Admin';
+                }
+            } else {
+                // User is not logged in
+                showAlert('Please log in first. Redirecting to login page...', 'info');
+                setTimeout(() => {
+                    window.location.href = 'Login.html';
+                }, 2000);
+            }
+        });
+
+        // Handle "Make Me Admin" button
+        setAdminBtn.addEventListener('click', async () => {
+            try {
+                loading.classList.add('show');
+                setAdminBtn.disabled = true;
+                hideAlert();
+
+                const result = await setCurrentUserAsAdmin();
+
+                if (result.success) {
+                    showAlert('✅ ' + result.message + ' Please wait...', 'success');
+                    
+                    // Refresh status after a delay
+                    setTimeout(async () => {
+                        const adminStatus = await isAdmin();
+                        const role = await getUserRole();
+                        
+                        userRole.textContent = `Role: ${role} ${adminStatus ? '✅ (Admin)' : '❌ (Not Admin)'}`;
+                        userRole.style.color = adminStatus ? '#28a745' : '#dc3545';
+                        
+                        if (adminStatus) {
+                            setAdminBtn.textContent = 'Already Admin ✅';
+                            showAlert('🎉 You are now an admin! Redirecting to admin login...', 'success');
+                            
+                            setTimeout(() => {
+                                window.location.href = 'admin-login.html';
+                            }, 2000);
+                        }
+                        
+                        loading.classList.remove('show');
+                    }, 1000);
+                } else {
+                    showAlert('❌ Error: ' + result.error, 'error');
+                    loading.classList.remove('show');
+                    setAdminBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error setting admin:', error);
+                showAlert('❌ An error occurred: ' + error.message, 'error');
+                loading.classList.remove('show');
+                setAdminBtn.disabled = false;
+            }
+        });
+
+        // Handle "Check Admin Status" button
+        checkStatusBtn.addEventListener('click', async () => {
+            try {
+                loading.classList.add('show');
+                hideAlert();
+
+                const adminStatus = await isAdmin();
+                const role = await getUserRole();
+                
+                userRole.textContent = `Role: ${role} ${adminStatus ? '✅ (Admin)' : '❌ (Not Admin)'}`;
+                userRole.style.color = adminStatus ? '#28a745' : '#dc3545';
+                
+                if (adminStatus) {
+                    showAlert('✅ You are an admin! You can access the admin dashboard.', 'success');
+                    setAdminBtn.textContent = 'Already Admin ✅';
+                    setAdminBtn.disabled = true;
+                } else {
+                    showAlert('❌ You are not an admin. Click "Make Me Admin" to become one.', 'info');
+                    setAdminBtn.disabled = false;
+                }
+                
+                loading.classList.remove('show');
+            } catch (error) {
+                console.error('Error checking status:', error);
+                showAlert('❌ Error checking status: ' + error.message, 'error');
+                loading.classList.remove('show');
+            }
+        });
+
+        // Helper functions
+        function showAlert(message, type) {
+            alertMessage.textContent = message;
+            alertMessage.className = `alert alert-${type} show`;
+        }
+
+        function hideAlert() {
+            alertMessage.classList.remove('show');
+        }
+    </script>
+</body>
+</html>
+

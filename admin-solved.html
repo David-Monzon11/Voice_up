@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iReportPH - Solved Complaints</title>
+    <link rel="icon" type="image/png" href="./logo.png">
+    <link rel="stylesheet" href="./admin-dashboard.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-brand-area">
+                <div class="brand-icon">
+                    <img src="./logo.png" alt="iReportPH Logo" class="brand-logo">
+                </div>
+                <div class="brand-details">
+                    <span class="brand-title">iReportPH</span>
+                    <span class="brand-subtitle">Admin Control</span>
+                </div>
+            </div>
+
+            <div class="sidebar-user-card">
+                <div class="user-avatar" id="userAvatar">A</div>
+                <div class="user-meta">
+                    <div class="user-name" id="userName">Admin</div>
+                    <div class="user-email" id="adminEmail">admin@example.com</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <a href="./admin.html" class="nav-link nav-link-ghost">
+                        <span class="nav-link-icon">📊</span>
+                        <span class="nav-link-text">Dashboard</span>
+                    </a>
+                    <a href="./admin-solved.html" class="nav-link active">
+                        <span class="nav-link-icon">✅</span>
+                        <span class="nav-link-text">Solved Complaints</span>
+                    </a>
+                    <a href="./admin-analytics.html" class="nav-link nav-link-ghost">
+                        <span class="nav-link-icon">📈</span>
+                        <span class="nav-link-text">Analytics</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-support">
+                    <div class="support-icon">ℹ️</div>
+                    <div class="support-copy">
+                        Need help?<br>
+                        <a href="mailto:ireportph.help@gmail.com">Contact support</a>
+                    </div>
+                </div>
+                <button class="sidebar-footer-btn" id="logoutBtn">
+                    Log out
+                </button>
+            </div>
+        </aside>
+        <main class="content">
+            <div class="container">
+                <div class="card">
+                    <div class="toolbar">
+                        <div class="filters">
+                        </div>
+                    </div>
+                    <div id="complaintsGrid" class="admin-complaints-grid">
+                        <!-- Cards will be injected here -->
+                    </div>
+                    <div id="adminPagination" class="admin-pagination"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="./firebase-config.js"></script>
+    <script type="module">
+        import { onAuthChange, logoutUser, isAdmin } from './auth.js';
+        import { getAllComplaints, updateComplaintStatus, deleteComplaint } from './admin-dashboard.js';
+        import { USE_CLOUDINARY, CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET, CLOUDINARY_FOLDER } from './media-config.js';
+        import { db, storage } from './firebase-config.js';
+        import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
+        import { ref as dbRef, update as dbUpdate } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
+
+        const complaintsGrid = document.getElementById('complaintsGrid');
+        const adminPagination = document.getElementById('adminPagination');
+        const adminEmail = document.getElementById('adminEmail');
+        const userName = document.getElementById('userName');
+        const userAvatar = document.getElementById('userAvatar');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const filterButtons = document.querySelectorAll('.filters .btn');
+        const statusButtons = [...filterButtons];
+
+        const THEME_STORAGE_KEY = 'ireport-theme';
+        const themeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        let adminThemeLocked = false;
+        let allComplaints = [];
+        let currentFilter = 'resolved';
+        let currentPage = 1;
+        const PAGE_SIZE = 2;
+        let unsubscribeAll = null;
+
+
+        const adminProofInput = document.createElement('input');
+        adminProofInput.type = 'file';
+        adminProofInput.accept = 'image/*';
+        adminProofInput.style.display = 'none';
+        document.body.appendChild(adminProofInput);
+
+        async function encodeImageToDataUrl(file, { maxWidth = 900, maxHeight = 900, quality = 0.72, maxBytes = 350000 } = {}) {
+            const dataUrl = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+            const img = await new Promise((resolve, reject) => {
+                const i = new Image();
+                i.onload = () => resolve(i);
+                i.onerror = reject;
+                i.src = dataUrl;
+            });
+            const ratio = Math.min(1, maxWidth / img.width, maxHeight / img.height);
+            const w = Math.max(1, Math.floor(img.width * ratio));
+            const h = Math.max(1, Math.floor(img.height * ratio));
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            let q = quality;
+            let out = canvas.toDataURL('image/jpeg', q);
+            while (out.length * 0.75 > maxBytes && q > 0.4) {
+                q -= 0.08;
+                out = canvas.toDataURL('image/jpeg', q);
+            }
+            return out;
+        }
+
+        onAuthChange(async (user) => {
+            if (!user) {
+                window.location.href = 'Login.html';
+                return;
+            }
+            const ok = await isAdmin();
+            if (!ok) {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+            const email = user.email || '';
+            const displayName = user.displayName || 'Admin';
+            adminEmail.textContent = email || displayName;
+            userName.textContent = displayName;
+            userAvatar.textContent = (displayName || email || 'A').charAt(0).toUpperCase();
+
+            unsubscribeAll = getAllComplaints((list) => {
+                allComplaints = list;
+                render();
+            });
+        });
+
+        logoutBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                if (typeof unsubscribeAll === 'function') {
+                    try { unsubscribeAll(); } catch (_) {}
+                    unsubscribeAll = null;
+                }
+                const r = await logoutUser();
+                if (r.success) {
+                    window.location.href = 'Login.html';
+                } else {
+                    alert(r.error || 'Logout failed. Please try again.');
+                }
+            } catch (err) {
+                console.error('Logout error:', err);
+                alert('An error occurred during logout.');
+            }
+        });
+
+        statusButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const status = btn.dataset.status || 'resolved';
+                setActiveStatus(status);
+            });
+        });
+
+        function setActiveStatus(status) {
+            currentFilter = status;
+            filterButtons.forEach(b => b.classList.toggle('primary', b.dataset.status === status));
+            currentPage = 1;
+            render();
+        }
+
+        setActiveStatus('resolved');
+
+        function filtered() {
+            return allComplaints.filter(c => c.status === currentFilter);
+        }
+
+        function getPagedComplaints() {
+            const list = filtered();
+            const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+            currentPage = Math.min(currentPage, totalPages);
+            const start = (currentPage - 1) * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            return { pageItems: list.slice(start, end), totalPages, totalItems: list.length };
+        }
+
+        function render() {
+            const { pageItems, totalPages, totalItems } = getPagedComplaints();
+
+            const cards = pageItems.map(c => {
+                const url = c.fileURL && String(c.fileURL).trim()
+                    ? c.fileURL
+                    : (c.inlineImage && String(c.inlineImage).startsWith('data:image') ? c.inlineImage : '');
+                const hasMedia = !!url;
+                const isVideo = hasMedia && url.match(/\.(mp4|webm|ogg|mov|avi)$/i);
+                const statusClass = (c.status || 'resolved').replace('-', '_');
+                const priorityClass = (c.priority || 'medium').toLowerCase();
+
+                return `
+                <div class="admin-complaint-card">
+                    ${hasMedia ? `
+                        <div class="card-cover">
+                            ${isVideo ? `
+                                <video src="${url}" controls></video>
+                            ` : `
+                                <img src="${url}" alt="media" loading="lazy" onclick="event.stopPropagation(); window.openAdminPreview('${url}', false)"
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27380%27 height=%27200%27%3E%3Crect width=%27380%27 height=%27200%27 fill=%27%23f4f6fb%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 fill=%27%2399a%27 font-size=%2714%27 font-family=%27Arial%27 text-anchor=%27middle%27 dy=%27.3em%27%3ENo media%3C/text%3E%3C/svg%3E';">
+                            `}
+                        </div>
+                    ` : `
+                        <div class="card-cover card-cover-empty">No media</div>
+                    `}
+                    <div class="card-body">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <div class="card-title">${c.title || 'Untitled Complaint'}</div>
+                                <div class="card-meta-row">
+                                    <span class="card-chip category-chip">${c.category || 'Uncategorized'}</span>
+                                    <span class="card-chip priority-chip ${priorityClass}">${c.priority || 'medium'}</span>
+                                </div>
+                            </div>
+                            <span class="status-chip ${statusClass}">${(c.status || 'resolved').replace('_',' ')}</span>
+                        </div>
+
+                        <div class="card-location">📍 ${c.location || 'Location not specified'}</div>
+
+                        <div class="card-description">
+                            <div class="card-description-text" data-desc="${c.id}">${c.description || 'No description provided.'}</div>
+                            ${(c.description && c.description.length > 220) ? `<button class="desc-toggle" data-desc-toggle="${c.id}" onclick="event.stopPropagation(); window.toggleDescription('${c.id}')">Show more</button>` : ''}
+                        </div>
+
+                        ${(c.resolvedProofURL || c.resolvedProofInline) ? `
+                            <div class="card-status-updates">
+                                <div class="card-status-label">Resolved Proof</div>
+                                <div class="card-status-list">
+                                    <div class="status-pill resolved">
+                                        <span>Resolved</span>
+                                        <img src="${c.resolvedProofURL || c.resolvedProofInline}" alt="Resolved proof" onclick="event.stopPropagation(); window.openAdminPreview('${c.resolvedProofURL || c.resolvedProofInline}', false)">
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        ${c.adminNotes ? `
+                            <div class="admin-note">
+                                <strong>Admin Note:</strong> ${c.adminNotes}
+                            </div>
+                        ` : ''}
+
+                        <div class="card-footer">
+                            <div class="card-date">By: ${c.userId || 'Unknown'} • ${new Date(c.createdAt||0).toLocaleString()}</div>
+                            <div class="card-actions">
+                                <div class="status-actions">
+                                    <button class="btn btn-sm" onclick="event.stopPropagation(); window.adminSetStatus('${c.id}','in_progress')">Mark In Progress</button>
+                                    <button class="btn btn-sm" onclick="event.stopPropagation(); window.adminSetStatus('${c.id}','rejected')">Mark Rejected</button>
+                                </div>
+                                <button class="btn btn-sm danger" onclick="event.stopPropagation(); window.adminDelete('${c.id}')">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+
+            complaintsGrid.innerHTML = cards || `<div style="text-align:center;color:var(--text-muted);padding:24px;">No resolved complaints</div>`;
+
+            if (totalItems > PAGE_SIZE) {
+                adminPagination.innerHTML = `
+                    <div class="pagination-wrap">
+                        <button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="window.adminPrevPage()">&larr; Prev</button>
+                        <span class="page-label">Page ${currentPage} of ${totalPages}</span>
+                        <button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="window.adminNextPage()">Next &rarr;</button>
+                    </div>
+                `;
+            } else {
+                adminPagination.innerHTML = '';
+            }
+        }
+
+        window.adminSetStatus = async (id, status) => {
+            const label = (status || '').replace('_', ' ');
+            const proceed = confirm(`Change status to \"${label}\"?`);
+            if (!proceed) return;
+            const askProof = (status === 'in_progress' || status === 'resolved' || status === 'rejected') ? confirm('Attach a proof image?') : false;
+            let selectedFile = null;
+            if (askProof) {
+                selectedFile = await new Promise((resolve) => {
+                    const handler = () => {
+                        adminProofInput.removeEventListener('change', handler);
+                        resolve(adminProofInput.files && adminProofInput.files[0] ? adminProofInput.files[0] : null);
+                    };
+                    adminProofInput.value = '';
+                    adminProofInput.addEventListener('change', handler, { once: true });
+                    adminProofInput.click();
+                });
+                if (!selectedFile) {
+                    const cont = confirm('No file selected. Continue without proof?');
+                    if (!cont) return;
+                }
+            }
+
+            const note = prompt('Optional note (Cancel to abort):', '');
+            if (note === null) return;
+            const r = await updateComplaintStatus(id, status, note.trim() ? note : null);
+            if (!r.success) alert(r.error || 'Failed to update');
+
+            if (selectedFile) {
+                await uploadAdminProof(selectedFile, id, status);
+            }
+        };
+
+        window.adminDelete = async (id) => {
+            if (!confirm('Delete this complaint?')) return;
+            const r = await deleteComplaint(id);
+            if (!r.success) alert(r.error || 'Failed to delete');
+        };
+
+        async function uploadAdminProof(file, complaintId, status) {
+            const field = status === 'resolved'
+                ? 'resolvedProofURL'
+                : status === 'rejected'
+                    ? 'rejectedProofURL'
+                    : 'progressProofURL';
+            const fieldInline = status === 'resolved'
+                ? 'resolvedProofInline'
+                : status === 'rejected'
+                    ? 'rejectedProofInline'
+                    : 'progressProofInline';
+            try {
+                try {
+                    const inlineImage = await encodeImageToDataUrl(file);
+                    await dbUpdate(dbRef(db, `complaints/${complaintId}`), { [fieldInline]: inlineImage, updatedAt: Date.now() });
+                } catch (e) {
+                    console.warn('Inline preview generation failed:', e?.message || e);
+                }
+
+                if (USE_CLOUDINARY) {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+                    if (CLOUDINARY_FOLDER) formData.append('folder', `${CLOUDINARY_FOLDER}/admin/${complaintId}`);
+                    formData.append('context', `complaintId=${complaintId}`);
+                    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`, { method: 'POST', body: formData });
+                    if (!res.ok) throw new Error(`Cloudinary error ${res.status}`);
+                    const data = await res.json();
+                    const url = data.secure_url;
+                    await dbUpdate(dbRef(db, `complaints/${complaintId}`), { [field]: url, updatedAt: Date.now() });
+                    return url;
+                } else {
+                    const fileName = `complaints/${complaintId}/admin/${Date.now()}-${file.name}`;
+                    const sRef = storageRef(storage, fileName);
+                    await uploadBytes(sRef, file, { contentType: file.type || 'image/jpeg' });
+                    const url = await getDownloadURL(sRef);
+                    await dbUpdate(dbRef(db, `complaints/${complaintId}`), { [field]: url, updatedAt: Date.now() });
+                    return url;
+                }
+            } catch (e) {
+                console.error('Proof upload failed', e);
+                return null;
+            }
+        }
+
+        window.openAdminPreview = function(url, isVideo = false) {
+            try {
+                const modal = document.createElement('div');
+                modal.className = 'admin-modal';
+                modal.innerHTML = `
+                    <div class="admin-modal-overlay" onclick="window.closeAdminPreview()"></div>
+                    <div class="admin-modal-content">
+                        <button class="admin-modal-close" onclick="window.closeAdminPreview()">×</button>
+                        <div class="admin-modal-body">
+                            ${isVideo ? `
+                                <video src="${url}" controls autoplay style="width:100%;max-height:80vh;"></video>
+                            ` : `
+                                <img src="${url}" alt="Preview" style="width:100%;max-height:80vh;object-fit:contain;">
+                            `}
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                document.body.style.overflow = 'hidden';
+                window.addEventListener('keydown', escHandler);
+                function escHandler(e){ if(e.key === 'Escape'){ window.closeAdminPreview(); } }
+                modal._escHandler = escHandler;
+            } catch (e) {
+                console.error('Preview error:', e);
+                window.open(url, '_blank');
+            }
+        };
+
+        window.closeAdminPreview = function() {
+            const modal = document.querySelector('.admin-modal');
+            if (modal) {
+                if (modal._escHandler) window.removeEventListener('keydown', modal._escHandler);
+                modal.remove();
+                document.body.style.overflow = '';
+            }
+        };
+
+        window.toggleDescription = function(id) {
+            try {
+                const desc = document.querySelector(`[data-desc=\"${id}\"]`);
+                const btn = document.querySelector(`[data-desc-toggle=\"${id}\"]`);
+                if (!desc || !btn) {
+                    console.warn('Toggle description: elements not found for id:', id);
+                    return;
+                }
+                const isExpanded = desc.classList.contains('expanded');
+                if (isExpanded) {
+                    desc.classList.remove('expanded');
+                    btn.textContent = 'Show more';
+                } else {
+                    desc.classList.add('expanded');
+                    btn.textContent = 'Show less';
+                }
+            } catch (error) {
+                console.error('Error toggling description:', error);
+            }
+        };
+
+        window.adminNextPage = function() {
+            const list = filtered();
+            const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+            if (currentPage < totalPages) {
+                currentPage += 1;
+                render();
+            }
+        };
+
+        window.adminPrevPage = function() {
+            if (currentPage > 1) {
+                currentPage -= 1;
+                render();
+            }
+        };
+    </script>
+</body>
+</html>
+
+
+

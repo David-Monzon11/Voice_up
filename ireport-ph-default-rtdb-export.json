@@ -1,0 +1,82 @@
+{
+  "users": {
+    "sample-admin-001": {
+      "uid": "sample-admin-001",
+      "email": "admin@ireportph.com",
+      "displayName": "Admin User",
+      "photoURL": "",
+      "provider": "google",
+      "role": "admin",
+      "createdAt": 1700000000000,
+      "lastLogin": 1700000000000,
+      "adminSetAt": 1700000000000
+    },
+    "sample-user-001": {
+      "uid": "sample-user-001",
+      "email": "user@ireportph.com",
+      "displayName": "Regular User",
+      "photoURL": "",
+      "provider": "google",
+      "role": "user",
+      "createdAt": 1700000000000,
+      "lastLogin": 1700000000000
+    }
+  },
+  "complaints": {
+    "complaint-001": {
+      "id": "complaint-001",
+      "userId": "sample-user-001",
+      "title": "Sample Complaint Title",
+      "description": "This is a sample complaint description",
+      "category": "Infrastructure",
+      "location": "Manila, Philippines",
+      "status": "pending",
+      "priority": "medium",
+      "fileURL": null,
+      "createdAt": 1700000000000,
+      "updatedAt": 1700000000000,
+      "adminNotes": null,
+      "assignedTo": null
+    }
+  },
+  "notifications": {
+    "sample-user-001": {
+      "notification-001": {
+        "id": "notification-001",
+        "userId": "sample-user-001",
+        "type": "complaint_status_update",
+        "title": "Complaint Status Updated",
+        "message": "Your complaint has been reviewed",
+        "read": false,
+        "createdAt": 1700000000000,
+        "relatedComplaintId": "complaint-001"
+      }
+    }
+  },
+  "settings": {
+    "app": {
+      "name": "iReportPH",
+      "version": "1.0.0",
+      "maintenanceMode": false
+    },
+    "categories": {
+      "Infrastructure": true,
+      "Sanitation": true,
+      "Safety": true,
+      "Traffic": true,
+      "Other": true
+    },
+    "priorities": {
+      "low": true,
+      "medium": true,
+      "high": true,
+      "urgent": true
+    },
+    "statuses": {
+      "pending": "Pending Review",
+      "in_progress": "In Progress",
+      "resolved": "Resolved",
+      "rejected": "Rejected"
+    }
+  }
+}

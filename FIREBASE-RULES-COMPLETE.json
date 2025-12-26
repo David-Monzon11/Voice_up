@@ -1,0 +1,26 @@
+{
+  "rules": {
+    "complaints": {
+      ".indexOn": ["userId"],
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$complaintId": {
+        ".read": "auth != null",
+        ".write": "data.child('userId').val() === auth.uid || !data.exists() && newData.child('userId').val() === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin'"
+      }
+    },
+    "users": {
+      "$userId": {
+        ".read": "$userId === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+        ".write": "$userId === auth.uid || (!data.exists() && newData.child('uid').val() === auth.uid) || root.child('users').child(auth.uid).child('role').val() === 'admin'"
+      }
+    },
+    "settings": {
+      ".read": "auth != null",
+      ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'"
+    },
+    ".read": "auth != null",
+    ".write": "auth != null"
+  }
+}
+

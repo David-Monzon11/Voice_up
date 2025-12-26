@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iReportPH - Submit Complaint</title>
+    <link rel="icon" type="image/png" href="./Screenshot 2025-12-19 134046.png">
+    <style>
+       * {
+            margin: 0;  
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --app-bg: linear-gradient(180deg, #0b1120 0%, #0f172a 50%, #111827 100%);
+            --surface-solid: #141b2d;
+            --surface-soft: rgba(30, 41, 59, 0.7);
+            --brand-primary: #6366f1;
+            --brand-primary-dark: #4338ca;
+            --brand-secondary: #0ea5e9;
+            --brand-accent: #38bdf8;
+            --text-primary: #f8fafc;
+            --text-secondary: #e2e8f0;
+            --text-muted: #a5b4cb;
+            --border-soft: rgba(148, 163, 184, 0.2);
+            --border-strong: rgba(148, 163, 184, 0.35);
+            --shadow-card: rgba(2, 6, 23, 0.55);
+            --stat-text-color: #f8fafc;
+            --stat-subtext-color: #dbeafe;
+            --status-pending-bg: rgba(250, 204, 21, 0.24);
+            --status-pending-color: #fde68a;
+            --status-inprogress-bg: rgba(56, 189, 248, 0.22);
+            --status-inprogress-color: #bae6fd;
+            --status-resolved-bg: rgba(34, 197, 94, 0.24);
+            --status-resolved-color: #bbf7d0;
+            --status-rejected-bg: rgba(248, 113, 113, 0.26);
+            --status-rejected-color: #fecdd3;
+            --priority-low-bg: rgba(34, 197, 94, 0.22);
+            --priority-low-color: #bbf7d0;
+            --priority-medium-bg: rgba(250, 204, 21, 0.28);
+            --priority-medium-color: #fde68a;
+            --priority-high-bg: rgba(248, 113, 113, 0.26);
+            --priority-high-color: #fecdd3;
+            --priority-urgent-bg: rgba(190, 24, 93, 0.32);
+            --priority-urgent-color: #fbcfe8;
+            --category-tag-bg: rgba(14, 165, 233, 0.22);
+            --category-tag-color: #e0f2fe;
+            --link-accent: #38bdf8;
+            --link-accent-hover: #00a8e8;
+            --danger-action-color: #f87171;
+            --danger-action-bg: rgba(248, 113, 113, 0.15);
+            --danger-action-border: rgba(248, 113, 113, 0.35);
+            --danger-action-shadow: 0 12px 24px rgba(248, 113, 113, 0.25);
+            --danger-action-hover: #f43f5e;
+            --danger-action-bg-hover: rgba(248, 113, 113, 0.22);
+            --danger-action-border-hover: rgba(248, 113, 113, 0.4);
+            --danger-action-shadow-hover: 0 18px 28px rgba(248, 113, 113, 0.35);
+            --filter-btn-bg: rgba(20, 27, 45, 0.85);
+            --filter-btn-text: #e2e8f0;
+            --filter-btn-hover-bg: rgba(30, 41, 59, 0.95);
+            --filter-btn-hover-text: #ffffff;
+        }
+
+        html[data-theme="light"] {
+            --app-bg: linear-gradient(180deg, #f5fbff 0%, #ffffff 100%);
+            --surface-solid: #ffffff;
+            --surface-soft: rgba(0, 52, 89, 0.05);
+            --brand-primary: #007ea7;
+            --brand-primary-dark: #003459;
+            --brand-secondary: #00a8e8;
+            --brand-accent: #003459;
+            --text-primary: #003459;
+            --text-secondary: #1b4560;
+            --text-muted: #577089;
+            --border-soft: rgba(0, 52, 89, 0.12);
+            --border-strong: rgba(0, 52, 89, 0.24);
+            --shadow-card: rgba(0, 52, 89, 0.15);
+            --stat-text-color: #003459;
+            --stat-subtext-color: rgba(0, 52, 89, 0.75);
+            --status-pending-bg: rgba(250, 204, 21, 0.22);
+            --status-pending-color: #92400e;
+            --status-inprogress-bg: rgba(0, 112, 192, 0.18);
+            --status-inprogress-color: #0b4f71;
+            --status-resolved-bg: rgba(34, 197, 94, 0.2);
+            --status-resolved-color: #166534;
+            --status-rejected-bg: rgba(248, 113, 113, 0.2);
+            --status-rejected-color: #b91c1c;
+            --priority-low-bg: rgba(34, 197, 94, 0.18);
+            --priority-low-color: #166534;
+            --priority-medium-bg: rgba(250, 204, 21, 0.22);
+            --priority-medium-color: #92400e;
+            --priority-high-bg: rgba(248, 113, 113, 0.22);
+            --priority-high-color: #b91c1c;
+            --priority-urgent-bg: rgba(190, 24, 93, 0.28);
+            --priority-urgent-color: #9d174d;
+            --category-tag-bg: rgba(0, 122, 167, 0.14);
+            --category-tag-color: #003459;
+            --link-accent: #007ea7;
+            --link-accent-hover: #003459;
+            --danger-action-color: #d72323;
+            --danger-action-bg: rgba(248, 113, 113, 0.12);
+            --danger-action-border: rgba(248, 113, 113, 0.24);
+            --danger-action-shadow: 0 12px 24px rgba(248, 113, 113, 0.18);
+            --danger-action-hover: #b91c1c;
+            --danger-action-bg-hover: rgba(248, 113, 113, 0.2);
+            --danger-action-border-hover: rgba(248, 113, 113, 0.32);
+            --danger-action-shadow-hover: 0 16px 26px rgba(248, 113, 113, 0.24);
+            --filter-btn-bg: rgba(255, 255, 255, 0.95);
+            --filter-btn-text: #003459;
+            --filter-btn-hover-bg: rgba(0, 122, 167, 0.12);
+            --filter-btn-hover-text: #003459;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--app-bg);
+            min-height: 100vh;
+            display: flex;
+            color: var(--text-primary);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(200deg, #111827 0%, #0b1324 50%, #020617 100%);
+            color: white;
+            min-height: 100vh;
+            max-height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            padding: 28px 22px;
+            box-shadow: 14px 0 32px rgba(108,99,255,0.18);
+            border-right: 1px solid rgba(255,255,255,0.06);
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .sidebar-brand-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+        }
+
+        .sidebar-brand-icon img {
+            width: 26px;
+            height: 26px;
+            object-fit: contain;
+        }
+
+        .sidebar-brand-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .sidebar-brand-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+
+        .sidebar-brand-sub {
+            font-size: 0.74rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-user-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            box-shadow: 0 14px 24px rgba(0,0,0,0.25);
+        }
+
+        .sidebar-user-card .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.22);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .sidebar-user-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sidebar-user-meta .user-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .sidebar-user-meta .user-email {
+            font-size: 0.78rem;
+            opacity: 0.7;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.1px;
+            opacity: 0.65;
+            padding-left: 8px;
+        }
+
+        .nav-link {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 14px;
+            border: none;
+            background: transparent;
+            color: rgba(248,250,252,0.85);
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-weight: 600;
+            font-size: 0.92rem;
+        }
+
+        .nav-link .nav-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.05rem;
+        }
+
+        .nav-link .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .status-all-dot { background: rgba(96, 165, 250, 0.9); }
+        .status-pending-dot { background: rgba(250, 204, 21, 0.9); }
+        .status-inprogress-dot { background: rgba(56, 189, 248, 0.9); }
+        .status-resolved-dot { background: rgba(34, 197, 94, 0.9); }
+        .status-rejected-dot { background: rgba(248, 113, 113, 0.9); }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.12);
+            transform: translateX(0);
+            box-shadow: 0 12px 22px rgba(0,0,0,0.25);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg,rgba(255,255,255,0.2),rgba(255,255,255,0.05));
+            color: white;
+            box-shadow: 0 16px 26px rgba(0,0,0,0.3);
+        }
+
+        .nav-link:active {
+            background: rgba(255,255,255,0.18);
+            transform: translateX(0);
+            box-shadow: 0 10px 18px rgba(0,0,0,0.2);
+            color: white;
+        }
+
+        .nav-link-ghost {
+            color: rgba(248,250,252,0.75);
+            font-weight: 500;
+        }
+
+        .nav-link-ghost:hover {
+            color: white;
+        }
+
+        .sidebar-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: auto;
+            position: sticky;
+            bottom: 0;
+            background: linear-gradient(200deg, #111827 0%, #0b1324 50%, #020617 100%);
+            padding-top: 12px;
+        }
+
+        .sidebar-support {
+            display: flex;
+            gap: 12px;
+            background: rgba(255,255,255,0.09);
+            border-radius: 16px;
+            padding: 14px 16px;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+            font-size: 0.78rem;
+            line-height: 1.3;
+        }
+
+        .sidebar-support a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .sidebar-support .support-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-footer button {
+            width: 100%;
+            padding: 12px 18px;
+            border-radius: 14px;
+            border: none;
+            background: linear-gradient(135deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08));
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.22);
+        }
+
+        .sidebar-footer button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 28px rgba(0,0,0,0.28);
+        }
+
+        /* Light mode fixes for sidebar */
+        html[data-theme="light"] .sidebar {
+            background: linear-gradient(200deg, #ffffff 0%, #e8f4ff 100%);
+            color: #003459;
+            border-right: 1px solid rgba(0, 52, 89, 0.12);
+            box-shadow: 12px 0 30px rgba(0, 52, 89, 0.12);
+        }
+
+        html[data-theme="light"] .sidebar-brand {
+            border-bottom: 1px solid rgba(0, 52, 89, 0.12);
+        }
+
+        html[data-theme="light"] .sidebar-brand-icon {
+            background: rgba(0, 122, 167, 0.12);
+            box-shadow: 0 10px 20px rgba(0, 52, 89, 0.12);
+        }
+
+        html[data-theme="light"] .sidebar-user-card {
+            background: rgba(0, 52, 89, 0.06);
+            box-shadow: 0 10px 18px rgba(0, 52, 89, 0.12);
+        }
+
+        html[data-theme="light"] .sidebar-user-card .user-avatar {
+            background: rgba(0, 122, 167, 0.18);
+            color: #003459;
+        }
+
+        html[data-theme="light"] .nav-link {
+            color: rgba(0, 52, 89, 0.75);
+        }
+
+        html[data-theme="light"] .nav-link:hover {
+            background: rgba(0, 52, 89, 0.08);
+            color: #003459;
+            box-shadow: 0 10px 18px rgba(0, 52, 89, 0.12);
+        }
+
+        html[data-theme="light"] .nav-link.active {
+            background: linear-gradient(135deg, #e4f4ff 0%, #cfe8ff 100%);
+            color: #003459;
+            box-shadow: 0 12px 22px rgba(0, 52, 89, 0.12);
+        }
+
+        html[data-theme="light"] .nav-link-ghost {
+            color: rgba(0, 52, 89, 0.6);
+        }
+
+        html[data-theme="light"] .nav-link-ghost:hover {
+            color: #003459;
+        }
+
+        html[data-theme="light"] .sidebar-footer {
+            background: linear-gradient(200deg, #ffffff 0%, #e8f4ff 100%);
+        }
+
+        html[data-theme="light"] .sidebar-support {
+            background: rgba(0, 52, 89, 0.06);
+            border: 1px solid rgba(0, 52, 89, 0.14);
+            box-shadow: 0 10px 18px rgba(0, 52, 89, 0.12);
+            color: #003459;
+        }
+
+        html[data-theme="light"] .sidebar-support a {
+            color: #007ea7;
+        }
+
+        html[data-theme="light"] .sidebar-support .support-icon {
+            background: rgba(0, 122, 167, 0.16);
+            color: #007ea7;
+        }
+
+        html[data-theme="light"] .sidebar-footer button {
+            background: linear-gradient(135deg, #00a8e8 0%, #007ea7 100%);
+            color: #ffffff;
+            box-shadow: 0 12px 20px rgba(0, 52, 89, 0.14);
+        }
+
+        html[data-theme="light"] .sidebar-footer button:hover {
+            box-shadow: 0 16px 24px rgba(0, 52, 89, 0.16);
+        }
+
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px 26px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px 0;
+        }
+
+        .form-container {
+            background: var(--surface-solid);
+            padding: 44px;
+            border-radius: 24px;
+            box-shadow: 0 28px 60px var(--shadow-card);
+            margin-top: 20px;
+            border: 1px solid var(--border-soft);
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+        }
+
+        .form-header h1 {
+            color: var(--text-primary);
+            font-size: 2.1rem;
+            margin-bottom: 10px;
+        }
+
+        .form-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group label .required {
+            color: var(--danger);
+            margin-left: 3px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+            background: var(--surface-soft);
+            color: var(--text-primary);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.12);
+            color: var(--text-primary);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-group small {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .location-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .location-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .location-item label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: var(--text-secondary);
+        }
+
+        .location-item select,
+        .location-item input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-soft);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+            background: var(--surface-soft);
+            color: var(--text-primary);
+        }
+
+        .location-item select:focus,
+        .location-item input:focus {
+            outline: none;
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.12);
+        }
+
+        .location-note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .optional-tag {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .file-upload {
+            border: 2px dashed rgba(108, 99, 255, 0.3);
+            border-radius: 18px;
+            padding: 36px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--surface-soft);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+        }
+
+        .file-upload:hover {
+            border-color: var(--brand-primary);
+            background: rgba(108,99,255,0.08);
+            box-shadow: inset 0 0 0 1px rgba(108,99,255,0.12);
+        }
+
+        .file-upload.dragover {
+            border-color: var(--brand-primary);
+            background: rgba(108,99,255,0.14);
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .file-upload-text {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+
+        .file-upload-hint {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .file-preview {
+            margin-top: 15px;
+            padding: 20px;
+            background: var(--surface-soft);
+            border-radius: 16px;
+            display: none;
+            border: 1px solid var(--border-soft);
+        }
+
+        .file-preview.show {
+            display: block;
+        }
+
+        .file-preview-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: rgba(108,99,255,0.08);
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .file-preview-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .file-preview-item img {
+            width: 64px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid var(--border-soft);
+        }
+
+        .file-preview-item .file-info {
+            flex: 1;
+        }
+
+        .file-preview-item .file-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .file-preview-item .file-size {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .file-preview-item .remove-file {
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            flex: 1;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+            color: white;
+            box-shadow: 0 18px 34px rgba(108,99,255,0.26);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 26px 44px rgba(108,99,255,0.32);
+        }
+
+        .btn-secondary {
+            background: rgba(20,27,45,0.88);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-soft);
+            box-shadow: 0 16px 30px rgba(2,6,23,0.45);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(30,41,59,0.95);
+            color: var(--text-primary);
+            border-color: var(--border-strong);
+            transform: translateY(-1px);
+            box-shadow: 0 22px 36px rgba(2,6,23,0.55);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: var(--alert-success-bg);
+            color: var(--alert-success-text);
+            border: 1px solid var(--alert-success-border);
+        }
+
+        .alert-error {
+            background: var(--alert-error-bg);
+            color: var(--alert-error-text);
+            border: 1px solid var(--alert-error-border);
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.25);
+            border-top: 4px solid var(--brand-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 12px 26px rgba(0,0,0,0.18);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--loading-text-color);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        html[data-theme="light"] .theme-toggle-btn {
+            background: rgba(255, 255, 255, 0.18);
+            color: #003459;
+            border: 1px solid rgba(0, 52, 89, 0.2);
+            box-shadow: 0 12px 24px rgba(0, 52, 89, 0.18);
+        }
+
+        html[data-theme="light"] .theme-toggle-btn:hover {
+            box-shadow: 0 18px 32px rgba(0, 52, 89, 0.25);
+        }
+
+        html[data-theme="light"] .form-container {
+            box-shadow: 0 26px 48px rgba(0, 52, 89, 0.16);
+            border: 1px solid rgba(0, 52, 89, 0.12);
+        }
+
+        html[data-theme="light"] .form-group input,
+        html[data-theme="light"] .form-group select,
+        html[data-theme="light"] .form-group textarea,
+        html[data-theme="light"] .location-item select,
+        html[data-theme="light"] .location-item input {
+            background: rgba(255,255,255,0.92);
+            color: var(--text-primary);
+        }
+
+        html[data-theme="light"] .file-upload {
+            border-color: rgba(0, 52, 89, 0.16);
+            background: rgba(255,255,255,0.92);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6);
+        }
+
+        html[data-theme="light"] .file-preview {
+            border: 1px solid rgba(0, 52, 89, 0.12);
+            background: rgba(255,255,255,0.9);
+        }
+
+        html[data-theme="light"] .file-upload {
+            border-color: rgba(0, 52, 89, 0.16);
+            background: rgba(0, 52, 89, 0.04);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6);
+        }
+
+        html[data-theme="light"] .file-upload:hover {
+            background: rgba(0, 168, 232, 0.08);
+            border-color: rgba(0, 122, 167, 0.3);
+        }
+
+        html[data-theme="light"] .file-preview {
+            border: 1px solid rgba(0, 52, 89, 0.12);
+            background: rgba(0, 52, 89, 0.04);
+        }
+
+        html[data-theme="light"] .file-preview-item {
+            background: rgba(0, 52, 89, 0.08);
+        }
+
+        html[data-theme="light"] .btn-primary {
+            box-shadow: 0 18px 34px rgba(0, 122, 167, 0.25);
+        }
+
+        html[data-theme="light"] .btn-secondary {
+            background: rgba(0, 52, 89, 0.08);
+            color: var(--text-secondary);
+            border: 1px solid rgba(0, 52, 89, 0.2);
+            box-shadow: 0 12px 20px rgba(0, 52, 89, 0.12);
+        }
+
+        html[data-theme="light"] .btn-secondary:hover {
+            background: rgba(0, 122, 167, 0.12);
+            border-color: rgba(0, 52, 89, 0.24);
+        }
+
+        html[data-theme="light"] .spinner {
+            border-color: rgba(0, 52, 89, 0.12);
+            box-shadow: 0 12px 22px rgba(0, 52, 89, 0.18);
+        }
+
+        html[data-theme="light"] .loading-text {
+            color: #003459;
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 25px 20px;
+            }
+
+            .location-group {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+        <div class="sidebar-brand-icon">
+            <img src="./Screenshot 2025-12-19 134046.png" alt="iReportPH Logo">
+        </div>
+        <div class="sidebar-brand-details">
+            <span class="sidebar-brand-name">iReportPH</span>
+            <span class="sidebar-brand-sub">Citizen Portal</span>
+        </div>
+    </div>
+
+    <div class="sidebar-user-card">
+        <div class="user-avatar" id="userAvatar">U</div>
+        <div class="sidebar-user-meta">
+            <div class="user-name" id="userName">User</div>
+            <div class="user-email" id="userEmail">user@example.com</div>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="nav-section">
+            <div class="nav-section-title">Navigation</div>
+            <a href="./dashboard.html" class="nav-link nav-link-ghost">
+                <span class="nav-icon">📊</span>
+                <span class="nav-link-text">Dashboard</span>
+            </a>
+            <a href="./complaintForm.html" class="nav-link active">
+                <span class="nav-icon">➕</span>
+                <span class="nav-link-text">Submit Complaint</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="sidebar-support">
+            <div class="support-icon">ℹ️</div>
+            <div class="support-copy">
+                Need assistance?<br>
+                <a href="mailto:ireportph.help@gmail.com">Contact support</a>
+            </div>
+        </div>
+        <button class="sidebar-footer-btn" id="logoutBtn">
+            Log out
+        </button>
+    </div>
+</aside>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Submitting complaint...</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h1>Report a Problem</h1>
+                <p>Help improve your community by reporting issues in your barangay, city, or province</p>
+            </div>
+
+            <!-- Alert Messages -->
+            <div id="successAlert" class="alert alert-success"></div>
+            <div id="errorAlert" class="alert alert-error"></div>
+
+            <!-- Complaint Form -->
+            <form id="complaintForm">
+                <!-- Title -->
+                <div class="form-group">
+                    <label for="title">Complaint Type <span class="required">*</span></label>
+                    <select id="title" name="title" required>
+                        <option value="">Select a complaint type</option>
+                        <option value="Flooding">Flooding</option>
+                        <option value="Garbage/Waste Management">Garbage/Waste Management</option>
+                        <option value="Road Damage/Potholes">Road Damage/Potholes</option>
+                        <option value="Broken Streetlights">Broken Streetlights</option>
+                        <option value="Water Supply Issue">Water Supply Issue</option>
+                        <option value="Drainage Problem">Drainage Problem</option>
+                        <option value="Traffic Issue">Traffic Issue</option>
+                        <option value="Safety Concern">Safety Concern</option>
+                        <option value="Noise Complaint">Noise Complaint</option>
+                        <option value="Illegal Construction">Illegal Construction</option>
+                        <option value="Vandalism">Vandalism</option>
+                        <option value="Stray Animals">Stray Animals</option>
+                        <option value="Fire Hazard">Fire Hazard</option>
+                        <option value="Electrical Issue">Electrical Issue</option>
+                        <option value="Sewage Problem">Sewage Problem</option>
+                        <option value="Public Health Concern">Public Health Concern</option>
+                        <option value="Environmental Issue">Environmental Issue</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <small>Select the type of problem you want to report</small>
+                </div>
+
+                <!-- Category -->
+                <div class="form-group">
+                    <label for="category">Category <span class="required">*</span></label>
+                    <select id="category" name="category" required>
+                        <option value="">Select a category</option>
+                        <option value="Infrastructure">Infrastructure (Roads, Bridges, Buildings)</option>
+                        <option value="Flooding">Flooding & Drainage</option>
+                        <option value="Sanitation">Sanitation & Waste Management</option>
+                        <option value="Safety">Safety & Security</option>
+                        <option value="Traffic">Traffic & Transportation</option>
+                        <option value="Water">Water Supply</option>
+                        <option value="Electricity">Electricity & Power</option>
+                        <option value="Environment">Environment & Pollution</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Location -->
+                <div class="form-group">
+                    <label>Location <span class="required">*</span></label>
+                    <div class="location-group">
+                        <div class="location-item">
+                            <label for="province">Province <span class="required">*</span></label>
+                            <select id="province" name="province" required>
+                                <option value="">Select Province</option>
+                                <option value="Metro Manila">Metro Manila</option>
+                                <option value="Abra">Abra</option>
+                                <option value="Agusan del Norte">Agusan del Norte</option>
+                                <option value="Agusan del Sur">Agusan del Sur</option>
+                                <option value="Aklan">Aklan</option>
+                                <option value="Albay">Albay</option>
+                                <option value="Antique">Antique</option>
+                                <option value="Apayao">Apayao</option>
+                                <option value="Aurora">Aurora</option>
+                                <option value="Basilan">Basilan</option>
+                                <option value="Bataan">Bataan</option>
+                                <option value="Batanes">Batanes</option>
+                                <option value="Batangas">Batangas</option>
+                                <option value="Benguet">Benguet</option>
+                                <option value="Biliran">Biliran</option>
+                                <option value="Bohol">Bohol</option>
+                                <option value="Bukidnon">Bukidnon</option>
+                                <option value="Bulacan">Bulacan</option>
+                                <option value="Cagayan">Cagayan</option>
+                                <option value="Camarines Norte">Camarines Norte</option>
+                                <option value="Camarines Sur">Camarines Sur</option>
+                                <option value="Camiguin">Camiguin</option>
+                                <option value="Capiz">Capiz</option>
+                                <option value="Catanduanes">Catanduanes</option>
+                                <option value="Cavite">Cavite</option>
+                                <option value="Cebu">Cebu</option>
+                                <option value="Cotabato">Cotabato</option>
+                                <option value="Davao del Norte">Davao del Norte</option>
+                                <option value="Davao del Sur">Davao del Sur</option>
+                                <option value="Davao Occidental">Davao Occidental</option>
+                                <option value="Davao Oriental">Davao Oriental</option>
+                                <option value="Dinagat Islands">Dinagat Islands</option>
+                                <option value="Eastern Samar">Eastern Samar</option>
+                                <option value="Guimaras">Guimaras</option>
+                                <option value="Ifugao">Ifugao</option>
+                                <option value="Ilocos Norte">Ilocos Norte</option>
+                                <option value="Ilocos Sur">Ilocos Sur</option>
+                                <option value="Iloilo">Iloilo</option>
+                                <option value="Isabela">Isabela</option>
+                                <option value="Kalinga">Kalinga</option>
+                                <option value="La Union">La Union</option>
+                                <option value="Laguna">Laguna</option>
+                                <option value="Lanao del Norte">Lanao del Norte</option>
+                                <option value="Lanao del Sur">Lanao del Sur</option>
+                                <option value="Leyte">Leyte</option>
+                                <option value="Maguindanao">Maguindanao</option>
+                                <option value="Marinduque">Marinduque</option>
+                                <option value="Masbate">Masbate</option>
+                                <option value="Misamis Occidental">Misamis Occidental</option>
+                                <option value="Misamis Oriental">Misamis Oriental</option>
+                                <option value="Mountain Province">Mountain Province</option>
+                                <option value="Negros Occidental">Negros Occidental</option>
+                                <option value="Negros Oriental">Negros Oriental</option>
+                                <option value="Northern Samar">Northern Samar</option>
+                                <option value="Nueva Ecija">Nueva Ecija</option>
+                                <option value="Nueva Vizcaya">Nueva Vizcaya</option>
+                                <option value="Occidental Mindoro">Occidental Mindoro</option>
+                                <option value="Oriental Mindoro">Oriental Mindoro</option>
+                                <option value="Palawan">Palawan</option>
+                                <option value="Pampanga">Pampanga</option>
+                                <option value="Pangasinan">Pangasinan</option>
+                                <option value="Quezon">Quezon</option>
+                                <option value="Quirino">Quirino</option>
+                                <option value="Rizal">Rizal</option>
+                                <option value="Romblon">Romblon</option>
+                                <option value="Samar">Samar</option>
+                                <option value="Sarangani">Sarangani</option>
+                                <option value="Siquijor">Siquijor</option>
+                                <option value="Sorsogon">Sorsogon</option>
+                                <option value="South Cotabato">South Cotabato</option>
+                                <option value="Southern Leyte">Southern Leyte</option>
+                                <option value="Sultan Kudarat">Sultan Kudarat</option>
+                                <option value="Sulu">Sulu</option>
+                                <option value="Surigao del Norte">Surigao del Norte</option>
+                                <option value="Surigao del Sur">Surigao del Sur</option>
+                                <option value="Tarlac">Tarlac</option>
+                                <option value="Tawi-Tawi">Tawi-Tawi</option>
+                                <option value="Zambales">Zambales</option>
+                                <option value="Zamboanga del Norte">Zamboanga del Norte</option>
+                                <option value="Zamboanga del Sur">Zamboanga del Sur</option>
+                                <option value="Zamboanga Sibugay">Zamboanga Sibugay</option>
+                            </select>
+                        </div>
+                        <div class="location-item">
+                            <label for="city">City/Municipality <span class="required">*</span></label>
+                            <select id="city" name="city" required style="display: none;">
+                                <option value="">Select Province first</option>
+                            </select>
+                            <input 
+                                type="text" 
+                                id="cityInput" 
+                                name="cityInput" 
+                                placeholder="Enter City/Municipality"
+                                style="display: none;"
+                            >
+                            <span class="location-note" id="cityNote">Select province first</span>
+                        </div>
+                        <div class="location-item">
+                            <label for="barangay">Barangay <span class="optional-tag">(Optional)</span></label>
+                            <select id="barangay" name="barangay" style="display: none;">
+                                <option value="">Select City first</option>
+                            </select>
+                            <input 
+                                type="text" 
+                                id="barangayInput" 
+                                name="barangayInput" 
+                                placeholder="Enter Barangay (optional)"
+                                style="display: none;"
+                            >
+                            <span class="location-note" id="barangayNote">Select city first</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <label for="location" style="font-size: 0.9rem; font-weight: 500; margin-bottom: 5px; display: block; color: var(--text-secondary);">
+                            Specific Address or Landmark <span class="optional-tag">(Optional)</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="location" 
+                            name="location" 
+                            placeholder="e.g., Street name, Building name, Landmark"
+                        >
+                        <small>Provide specific address or landmark if available</small>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="description">Description <span class="required">*</span></label>
+                    <textarea 
+                        id="description" 
+                        name="description" 
+                        placeholder="Describe the problem in detail. Include when it started, how severe it is, and any other relevant information..."
+                        required
+                        maxlength="2000"
+                    ></textarea>
+                    <small><span id="charCount">0</span> / 2000 characters</small>
+                </div>
+
+                <!-- Priority -->
+                <div class="form-group">
+                    <label for="priority">Priority Level</label>
+                    <select id="priority" name="priority">
+                        <option value="low">Low - Minor issue, not urgent</option>
+                        <option value="medium" selected>Medium - Moderate issue</option>
+                        <option value="high">High - Serious issue, needs attention</option>
+                        <option value="urgent">Urgent - Critical issue, immediate action needed</option>
+                    </select>
+                    <small>Select the urgency level of the problem</small>
+                </div>
+
+                <!-- File Upload -->
+                <div class="form-group">
+                    <label>Photo/Video Evidence (Optional)</label>
+                    <div class="file-upload" id="fileUpload">
+                        <div class="file-upload-icon">📷</div>
+                        <div class="file-upload-text">Click to upload or drag and drop</div>
+                        <div class="file-upload-hint">Supports: JPG, PNG, MP4 (Max 10MB)</div>
+                        <input type="file" id="fileInput" accept="image/*,video/*" multiple>
+                    </div>
+                    <div class="file-preview" id="filePreview"></div>
+                    <small>Upload photos or videos to help authorities understand the problem better</small>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        Submit Complaint
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>
+
+    <!-- Import Firebase config -->
+    <script type="module" src="./firebase-config.js"></script>
+    
+    <!-- Import auth and complaint functions -->
+    <script type="module">
+        import { onAuthChange, logoutUser, getCurrentUser, isAdmin } from './auth.js';
+        import { submitComplaint } from './complaintForm.js';
+
+        // Get DOM elements
+        const complaintForm = document.getElementById('complaintForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingText = document.getElementById('loadingText');
+        const successAlert = document.getElementById('successAlert');
+        const errorAlert = document.getElementById('errorAlert');
+        const fileUpload = document.getElementById('fileUpload');
+        const fileInput = document.getElementById('fileInput');
+        const filePreview = document.getElementById('filePreview');
+        const description = document.getElementById('description');
+        const charCount = document.getElementById('charCount');
+        const userEmail = document.getElementById('userEmail');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const provinceSelect = document.getElementById('province');
+        const citySelect = document.getElementById('city');
+        const cityInput = document.getElementById('cityInput');
+        const cityNote = document.getElementById('cityNote');
+        const barangaySelect = document.getElementById('barangay');
+        const barangayInput = document.getElementById('barangayInput');
+        const barangayNote = document.getElementById('barangayNote');
+        const themeToggleBtn = document.getElementById('themeToggle');
+
+        const THEME_STORAGE_KEY = 'ireport-theme';
+        const themeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        let userLockedTheme = false;
+
+        initializeThemeControls();
+
+        function initializeThemeControls() {
+            const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+            const prefersDark = themeMediaQuery.matches;
+
+            userLockedTheme = !!storedTheme;
+            const initialTheme = storedTheme || (prefersDark ? 'dark' : 'light');
+            applyTheme(initialTheme, userLockedTheme);
+
+            if (themeToggleBtn) {
+                themeToggleBtn.addEventListener('click', () => {
+                    const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+                    const nextTheme = current === 'light' ? 'dark' : 'light';
+                    userLockedTheme = true;
+                    applyTheme(nextTheme, true);
+                });
+            }
+
+            themeMediaQuery.addEventListener('change', event => {
+                if (!userLockedTheme) {
+                    applyTheme(event.matches ? 'dark' : 'light', false);
+                }
+            });
+        }
+
+        function applyTheme(theme, persistSelection) {
+            if (theme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                theme = 'dark';
+            }
+
+            if (persistSelection) {
+                localStorage.setItem(THEME_STORAGE_KEY, theme);
+            } else {
+                localStorage.removeItem(THEME_STORAGE_KEY);
+            }
+
+            updateThemeToggle(theme);
+        }
+
+        function updateThemeToggle(theme) {
+            if (!themeToggleBtn) return;
+            const isLight = theme === 'light';
+            const iconEl = themeToggleBtn.querySelector('.toggle-icon');
+            const labelEl = themeToggleBtn.querySelector('.toggle-label');
+            if (iconEl) iconEl.textContent = isLight ? '🌙' : '☀️';
+            if (labelEl) labelEl.textContent = isLight ? 'Dark mode' : 'Light mode';
+            themeToggleBtn.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+        }
+
+        let selectedFiles = [];
+
+        // Province to Cities/Municipalities mapping
+        const provinceCities = {
+            'Metro Manila': [
+                'Manila', 'Quezon City', 'Caloocan', 'Las Piñas', 'Makati', 
+                'Malabon', 'Mandaluyong', 'Marikina', 'Muntinlupa', 'Navotas',
+                'Parañaque', 'Pasay', 'Pasig', 'Pateros', 'San Juan', 
+                'Taguig', 'Valenzuela'
+            ],
+            'Pampanga': [
+                'Angeles', 'Apalit', 'Arayat', 'Bacolor', 'Candaba', 
+                'Floridablanca', 'Guagua', 'Lubao', 'Mabalacat', 'Macabebe',
+                'Magalang', 'Masantol', 'Mexico', 'Minalin', 'Porac',
+                'San Fernando', 'San Luis', 'San Simon', 'Santa Ana', 
+                'Santa Rita', 'Santo Tomas', 'Sasmuan'
+            ],
+            'Bulacan': [
+                'Angat', 'Balagtas', 'Baliuag', 'Bocaue', 'Bulakan',
+                'Bustos', 'Calumpit', 'Doña Remedios Trinidad', 'Guiguinto',
+                'Hagonoy', 'Malolos', 'Marilao', 'Meycauayan', 'Norzagaray',
+                'Obando', 'Pandi', 'Paombong', 'Plaridel', 'Pulilan',
+                'San Ildefonso', 'San Jose del Monte', 'San Miguel', 'San Rafael',
+                'Santa Maria'
+            ],
+            'Cavite': [
+                'Alfonso', 'Amadeo', 'Bacoor', 'Carmona', 'Cavite City',
+                'Dasmariñas', 'General Emilio Aguinaldo', 'General Mariano Alvarez',
+                'General Trias', 'Imus', 'Indang', 'Kawit', 'Magallanes',
+                'Maragondon', 'Mendez', 'Naic', 'Noveleta', 'Rosario',
+                'Silang', 'Tagaytay', 'Tanza', 'Ternate', 'Trece Martires City',
+                'Gen. Emilio Aguinaldo'
+            ],
+            'Laguna': [
+                'Alaminos', 'Bay', 'Biñan', 'Cabuyao', 'Calamba',
+                'Calauan', 'Cavinti', 'Famy', 'Kalayaan', 'Liliw',
+                'Los Baños', 'Luisiana', 'Lumban', 'Mabitac', 'Magdalena',
+                'Majayjay', 'Nagcarlan', 'Paete', 'Pagsanjan', 'Pakil',
+                'Pangil', 'Pila', 'Rizal', 'San Pablo', 'San Pedro',
+                'Santa Cruz', 'Santa Maria', 'Santa Rosa', 'Siniloan', 'Victoria'
+            ],
+            'Rizal': [
+                'Angono', 'Antipolo', 'Baras', 'Binangonan', 'Cainta',
+                'Cardona', 'Jalajala', 'Morong', 'Pililla', 'Rodriguez',
+                'San Mateo', 'Tanay', 'Taytay', 'Teresa'
+            ],
+            'Batangas': [
+                'Agoncillo', 'Alitagtag', 'Balayan', 'Balete', 'Bauan',
+                'Calaca', 'Calatagan', 'Cuenca', 'Ibaan', 'Laurel',
+                'Lemery', 'Lian', 'Lipa', 'Lobo', 'Mabini',
+                'Malvar', 'Mataasnakahoy', 'Nasugbu', 'Padre Garcia', 'Rosario',
+                'San Jose', 'San Juan', 'San Luis', 'San Nicolas', 'San Pascual',
+                'Santa Teresita', 'Santo Tomas', 'Taal', 'Talisay', 'Tanauan',
+                'Taysan', 'Tingloy', 'Tuy'
+            ],
+            'Quezon': [
+                'Agdangan', 'Alabat', 'Atimonan', 'Buenavista', 'Burdeos',
+                'Calauag', 'Candelaria', 'Catanauan', 'Dolores', 'General Luna',
+                'General Nakar', 'Guinayangan', 'Gumaca', 'Infanta', 'Jomalig',
+                'Lopez', 'Lucban', 'Lucena', 'Macalelon', 'Mauban',
+                'Mulanay', 'Padre Burgos', 'Pagbilao', 'Panukulan', 'Patnanungan',
+                'Perez', 'Pitogo', 'Plaridel', 'Polillo', 'Quezon',
+                'Real', 'Sampaloc', 'San Andres', 'San Antonio', 'San Francisco',
+                'San Narciso', 'Sariaya', 'Tagkawayan', 'Tayabas', 'Tiaong',
+                'Unisan'
+            ],
+            'Cebu': [
+                'Alcantara', 'Alcoy', 'Alegria', 'Aloguinsan', 'Argao',
+                'Asturias', 'Badian', 'Balamban', 'Bantayan', 'Barili',
+                'Bogo', 'Boljoon', 'Borbon', 'Carcar', 'Carmen',
+                'Catmon', 'Cebu City', 'Compostela', 'Consolacion', 'Cordova',
+                'Daanbantayan', 'Dalaguete', 'Danao', 'Dumanjug', 'Ginatilan',
+                'Lapu-Lapu', 'Liloan', 'Madridejos', 'Malabuyoc', 'Mandaue',
+                'Medellin', 'Minglanilla', 'Moalboal', 'Naga', 'Oslob',
+                'Pilar', 'Pinamungajan', 'Poro', 'Ronda', 'Samboan',
+                'San Fernando', 'San Francisco', 'San Remigio', 'Santa Fe',
+                'Santander', 'Sibonga', 'Sogod', 'Tabogon', 'Tabuelan',
+                'Talisay', 'Toledo', 'Tuburan', 'Tudela'
+            ],
+            'Iloilo': [
+                'Ajuy', 'Alimodian', 'Anilao', 'Badiangan', 'Balasan',
+                'Banate', 'Barotac Nuevo', 'Barotac Viejo', 'Batad', 'Bingawan',
+                'Cabatuan', 'Calinog', 'Carles', 'Concepcion', 'Dingle',
+                'Dueñas', 'Dumangas', 'Estancia', 'Guimbal', 'Igbaras',
+                'Iloilo City', 'Janiuay', 'Lambunao', 'Leganes', 'Lemery',
+                'Leon', 'Maasin', 'Miagao', 'Mina', 'New Lucena',
+                'Oton', 'Passi', 'Pavia', 'Pototan', 'San Dionisio',
+                'San Enrique', 'San Joaquin', 'San Miguel', 'San Rafael',
+                'Santa Barbara', 'Sara', 'Tigbauan', 'Tubungan', 'Zarraga'
+            ],
+            'Davao del Sur': [
+                'Bansalan', 'Davao City', 'Digos', 'Don Marcelino', 'Hagonoy',
+                'Jose Abad Santos', 'Kiblawan', 'Magsaysay', 'Malalag', 'Malita',
+                'Matanao', 'Padada', 'Santa Cruz', 'Santa Maria', 'Sarangani',
+                'Sulop'
+            ],
+            'Negros Occidental': [
+                'Bacolod', 'Bago', 'Binalbagan', 'Cadiz', 'Calatrava',
+                'Candoni', 'Cauayan', 'Enrique B. Magalona', 'Escalante', 'Himamaylan',
+                'Hinigaran', 'Hinoba-an', 'Ilog', 'Isabela', 'Kabankalan',
+                'La Carlota', 'La Castellana', 'Manapla', 'Moises Padilla', 'Murcia',
+                'Pontevedra', 'Pulupandan', 'Sagay', 'Salvador Benedicto', 'San Carlos',
+                'San Enrique', 'Silay', 'Sipalay', 'Talisay', 'Toboso',
+                'Valladolid', 'Victorias'
+            ]
+        };
+
+        // Function to update cities based on selected province
+        function updateCities() {
+            const selectedProvince = provinceSelect.value;
+            
+            if (!selectedProvince) {
+                // No province selected - hide both
+                citySelect.style.display = 'none';
+                cityInput.style.display = 'none';
+                cityNote.textContent = 'Select province first';
+                cityNote.style.display = 'block';
+                citySelect.removeAttribute('required');
+                cityInput.removeAttribute('required');
+                return;
+            }
+            
+            if (provinceCities[selectedProvince]) {
+                // Province has cities - show dropdown
+                citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+                provinceCities[selectedProvince].forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                });
+                // Add "Other" option
+                const otherOption = document.createElement('option');
+                otherOption.value = 'Other';
+                otherOption.textContent = 'Other (Enter below)';
+                citySelect.appendChild(otherOption);
+                
+                citySelect.style.display = 'block';
+                cityInput.style.display = 'none';
+                cityNote.style.display = 'none';
+                citySelect.setAttribute('required', 'required');
+                cityInput.removeAttribute('required');
+                cityInput.value = '';
+            } else {
+                // Province doesn't have cities - show text input
+                citySelect.style.display = 'none';
+                cityInput.style.display = 'block';
+                cityNote.style.display = 'none';
+                citySelect.removeAttribute('required');
+                cityInput.setAttribute('required', 'required');
+                citySelect.value = '';
+            }
+        }
+
+        // Handle "Other" option in city dropdown
+        citySelect.addEventListener('change', function() {
+            if (this.value === 'Other') {
+                cityInput.style.display = 'block';
+                cityInput.setAttribute('required', 'required');
+                cityInput.placeholder = 'Enter City/Municipality name';
+            } else {
+                cityInput.style.display = 'none';
+                cityInput.removeAttribute('required');
+                cityInput.value = '';
+            }
+            // Update barangays when city changes
+            updateBarangays();
+        });
+
+        // City to Barangays mapping
+        const cityBarangays = {
+            // Metro Manila Cities
+            'Manila': [
+                'Binondo', 'Ermita', 'Intramuros', 'Malate', 'Paco',
+                'Pandacan', 'Port Area', 'Quiapo', 'Sampaloc', 'San Andres',
+                'San Miguel', 'San Nicolas', 'Santa Ana', 'Santa Cruz', 'Santa Mesa',
+                'Tondo', 'Tondo I', 'Tondo II'
+            ],
+            'Quezon City': [
+                'Bagong Silangan', 'Bahay Toro', 'Balingasa', 'Balintawak', 'Bungad',
+                'Central', 'Damar', 'Damayan', 'Del Monte', 'Diliman',
+                'E. Rodriguez', 'Fairview', 'Katipunan', 'Laging Handa', 'Loyola Heights',
+                'Marikina Heights', 'New Era', 'North Fairview', 'Novaliches', 'Project 1',
+                'Project 2', 'Project 3', 'Project 4', 'Project 5', 'Project 6',
+                'Project 7', 'Project 8', 'Roxas', 'Sacred Heart', 'San Antonio',
+                'San Isidro', 'San Jose', 'San Roque', 'Santa Cruz', 'Santa Monica',
+                'Santo Cristo', 'Santo Domingo', 'Tandang Sora', 'Tatalon', 'Timog',
+                'Unang Sigaw', 'University', 'West Triangle'
+            ],
+            'Makati': [
+                'Bel-Air', 'Cembo', 'Comembo', 'Dasmariñas', 'East Rembo',
+                'Forbes Park', 'Guadalupe Nuevo', 'Guadalupe Viejo', 'Kasilawan', 'La Paz',
+                'Magallanes', 'Olympia', 'Palanan', 'Pembo', 'Pio del Pilar',
+                'Pitogo', 'Poblacion', 'Post Proper Northside', 'Post Proper Southside', 'Rizal',
+                'San Antonio', 'San Isidro', 'San Lorenzo', 'Santa Cruz', 'Singkamas',
+                'South Cembo', 'Tejeros', 'Urdaneta', 'Valenzuela', 'West Rembo'
+            ],
+            'Pasig': [
+                'Bagong Ilog', 'Bagong Katipunan', 'Bambang', 'Buting', 'Caniogan',
+                'Dela Paz', 'Kalawaan', 'Kapasigan', 'Kapitolyo', 'Malinao',
+                'Manggahan', 'Maybunga', 'Ortigas', 'Palatiw', 'Pinagbuhatan',
+                'Pineda', 'Rosario', 'Sagad', 'San Antonio', 'San Joaquin',
+                'San Jose', 'San Miguel', 'San Nicolas', 'Santa Cruz', 'Santa Lucia',
+                'Santa Rosa', 'Santo Tomas', 'Santolan', 'Sumilang', 'Ugong'
+            ],
+            'Taguig': [
+                'Bagumbayan', 'Bambang', 'Calzada', 'Central Bicutan', 'Central Signal',
+                'Comembo', 'Fort Bonifacio', 'Hagonoy', 'Ibayo-Tipas', 'Katuparan',
+                'Ligid-Tipas', 'Lower Bicutan', 'Maharlika Village', 'Napindan', 'New Lower Bicutan',
+                'North Daang Hari', 'North Signal', 'Palingon', 'Pembo', 'Pinagsama',
+                'San Miguel', 'Santa Ana', 'South Daang Hari', 'South Signal', 'Tanyag',
+                'Upper Bicutan', 'Ususan', 'Wawa', 'Western Bicutan'
+            ],
+            // Pampanga Cities
+            'Angeles': [
+                'Anunas', 'Balibago', 'Capaya', 'Claro M. Recto', 'Cuayan',
+                'Cutcut', 'Cutud', 'Lourdes Sur', 'Lourdes Sur East', 'Malabañas',
+                'Mining', 'Pampang', 'Pulungbulu', 'Pulung Cacutud', 'Pulung Maragul',
+                'Salapungan', 'San Jose', 'San Nicolas', 'Santa Teresita', 'Santo Cristo',
+                'Santo Domingo', 'Sapalibutad', 'Sapangbato', 'Tabun', 'Villa Dolores'
+            ],
+            'San Fernando': [
+                'Bulaon', 'Calulut', 'Del Carmen', 'Del Pilar', 'Del Rosario',
+                'Dolores', 'Lara', 'Maimpis', 'Malino', 'Malpitic',
+                'Pandaras', 'Panipuan', 'Pulung Bulo', 'Quebiawan', 'Saguin',
+                'San Agustin', 'San Felipe', 'San Isidro', 'San Jose', 'San Juan',
+                'San Nicolas', 'San Pedro', 'Santa Lucia', 'Santa Teresita', 'Santo Niño',
+                'Sindalan', 'Telabastagan'
+            ],
+            'Mabalacat': [
+                'Atlu-Bola', 'Bacolor', 'Bamban', 'Camachiles', 'Dapdap',
+                'Dolores', 'Duquit', 'Lakandula', 'Mabiga', 'Macapagal Village',
+                'Mamatitang', 'Mangalit', 'Marcos Village', 'Pao', 'Poblacion',
+                'San Francisco', 'San Joaquin', 'Santa Ines', 'Santa Maria', 'Sapang Balen',
+                'Sapang Biabas', 'Tabun'
+            ],
+            'Guagua': [
+                'Ascomo', 'Bancal', 'Beton', 'Jose Abad Santos', 'Lambac',
+                'Magsaysay', 'Maquiapo', 'Natividad', 'Plaza Burgos', 'Pulungmasle',
+                'Rizal', 'San Agustin', 'San Antonio', 'San Isidro', 'San Juan',
+                'San Matias', 'San Miguel', 'San Nicolas', 'San Pablo', 'San Pedro',
+                'San Rafael', 'San Roque', 'San Vicente', 'Santa Filomena', 'Santa Ines',
+                'Santo Cristo', 'Santo Niño'
+            ],
+            'Apalit': [
+                'Balucuc', 'Calantipe', 'Cansinala', 'Capalangan', 'Colgante',
+                'Paligui', 'Sampaloc', 'San Juan', 'San Nicolas', 'San Vicente',
+                'Sucad', 'Sulipan', 'Tabuyuc'
+            ],
+            'Arayat': [
+                'Arenas', 'Baliti', 'Bato', 'Buensuceso', 'Camba',
+                'Candating', 'Cupang', 'Gatiawin', 'Guemasan', 'La Paz',
+                'Lacmit', 'Laquios', 'Mangga-Cacutud', 'Mapalad', 'Matamo',
+                'Panlinlang', 'Paralaya', 'Plazang Luma', 'Poblacion', 'San Agustin',
+                'San Antonio', 'San Isidro', 'San Jose', 'San Juan', 'San Mateo',
+                'San Nicolas', 'San Roque', 'Santa Lucia', 'Santo Niño', 'Suklayin'
+            ],
+            'Candaba': [
+                'Bahay Pare', 'Bambang', 'Barangca', 'Barit', 'Buas (Poblacion)',
+                'Cuayang Bugtong', 'Dalayap', 'Dulong Ilog', 'Gulap', 'Lanang',
+                'Lourdes', 'Magumbali', 'Mandasig', 'Mandili', 'Mangga',
+                'Mapaniqui', 'Paligui', 'Pangclara', 'Pansinao', 'Paralaya (Poblacion)',
+                'Pasig', 'Pescadores (Poblacion)', 'Pulong Gubat', 'Pulong Palazan', 'Salapungan',
+                'San Agustin (Poblacion)', 'Santo Rosario', 'Tagulod', 'Talang', 'Tenejero',
+                'Vizal San Pablo', 'Vizal Santo Cristo', 'Vizal Santo Niño'
+            ],
+            // Bulacan Cities
+            'Malolos': [
+                'Anilao', 'Bagna', 'Balayong', 'Balite', 'Bangkal',
+                'Barihan', 'Bulihan', 'Bungahan', 'Caingin', 'Calero',
+                'Caliligawan', 'Canalate', 'Caniogan', 'Catmon', 'Cofradia',
+                'Dakila', 'Guinhawa', 'Ligas', 'Ligas II', 'Ligas III',
+                'Longos', 'Mabolo', 'Mambog', 'Masile', 'Matimbo',
+                'Mojon', 'Namayan', 'Niugan', 'Pamarawan', 'Panasahan',
+                'Pinagbakahan', 'San Agustin', 'San Gabriel', 'San Juan', 'San Pablo',
+                'San Vicente', 'Santiago', 'Santisima Trinidad', 'Santo Cristo', 'Santo Niño',
+                'Santo Rosario', 'Sulucan', 'Sumapang Matanda', 'Sumapang Bata', 'Taal',
+                'Tikay'
+            ],
+            'San Jose del Monte': [
+                'Bagong Buhay', 'Bancal', 'Burgos', 'Cruz Poblacion', 'Fatima',
+                'Gaya-Gaya', 'Kaypian', 'Muzon', 'Paradise III', 'Poblacion',
+                'San Isidro', 'San Manuel', 'San Martin', 'San Rafael', 'Sapang Palay',
+                'Sta. Cruz', 'Sta. Maria', 'Tungkong Mangga', 'Tungkong Mangga II'
+            ],
+            // Cavite Cities
+            'Dasmariñas': [
+                'Burol', 'Datu Esmael', 'Emmanuel Bergado', 'Fatima', 'H-2',
+                'Langkaan I', 'Langkaan II', 'Luzviminda I', 'Luzviminda II', 'Paliparan I',
+                'Paliparan II', 'Paliparan III', 'Salawag', 'Salitran I', 'Salitran II',
+                'Salitran III', 'Salitran IV', 'Sampaloc I', 'Sampaloc II', 'Sampaloc III',
+                'Sampaloc IV', 'Sampaloc V', 'San Agustin I', 'San Agustin II', 'San Agustin III',
+                'San Andres I', 'San Andres II', 'San Antonio de Padua I', 'San Antonio de Padua II',
+                'San Francisco', 'San Isidro Labrador', 'San Jose', 'San Juan', 'San Luis',
+                'San Miguel I', 'San Miguel II', 'San Nicolas I', 'San Nicolas II', 'San Nicolas III',
+                'Santa Cristina I', 'Santa Cristina II', 'Santa Cruz I', 'Santa Cruz II', 'Santa Fe',
+                'Santa Lucia', 'Santo Cristo', 'Santo Niño', 'Santo Tomas', 'Vicente Aguinaldo',
+                'Vicente Lim', 'Vicente Reyes', 'Vicente Villanueva', 'Vicente Y. Villanueva', 'Vicente Y. Villanueva II',
+                'Vicente Y. Villanueva III', 'Vicente Y. Villanueva IV', 'Vicente Y. Villanueva V'
+            ],
+            'Imus': [
+                'Alapan I-A', 'Alapan I-B', 'Alapan I-C', 'Alapan II-A', 'Alapan II-B',
+                'Anabu I-A', 'Anabu I-B', 'Anabu I-C', 'Anabu I-D', 'Anabu I-E',
+                'Anabu I-F', 'Anabu II-A', 'Anabu II-B', 'Anabu II-C', 'Anabu II-D',
+                'Anabu II-E', 'Anabu II-F', 'Bagong Silang', 'Bayan Luma I', 'Bayan Luma II',
+                'Bayan Luma III', 'Bayan Luma IV', 'Bayan Luma V', 'Bayan Luma VI', 'Bayan Luma VII',
+                'Bayan Luma VIII', 'Bayan Luma IX', 'Bucandala I', 'Bucandala II', 'Bucandala III',
+                'Bucandala IV', 'Bucandala V', 'Carsadang Bago I', 'Carsadang Bago II', 'Malagasang I-A',
+                'Malagasang I-B', 'Malagasang I-C', 'Malagasang I-D', 'Malagasang I-E', 'Malagasang I-F',
+                'Malagasang I-G', 'Malagasang II-A', 'Malagasang II-B', 'Malagasang II-C', 'Malagasang II-D',
+                'Malagasang II-E', 'Malagasang II-F', 'Malagasang II-G', 'Mariano Espeleta I', 'Mariano Espeleta II',
+                'Mariano Espeleta III', 'Palico I', 'Palico II', 'Palico III', 'Palico IV',
+                'Pasong Buaya I', 'Pasong Buaya II', 'Poblacion I-A', 'Poblacion I-B', 'Poblacion I-C',
+                'Poblacion II-A', 'Poblacion II-B', 'Poblacion III-A', 'Poblacion III-B', 'Poblacion IV-A',
+                'Poblacion IV-B', 'Toclong I-A', 'Toclong I-B', 'Toclong I-C', 'Toclong II-A',
+                'Toclong II-B'
+            ],
+            // Laguna Cities
+            'Calamba': [
+                'Bagong Kalsada', 'Banlic', 'Barandal', 'Bucal', 'Bunggo',
+                'Burol', 'Camaligan', 'Canlubang', 'Halang', 'Hornalan',
+                'Kay-Anlog', 'La Mesa', 'Lawa', 'Lecheria', 'Lingga',
+                'Looc', 'Mabato', 'Majada Labas', 'Makiling', 'Mapagong',
+                'Masili', 'Maunong', 'Mayapa', 'Milagrosa', 'Paciano Rizal',
+                'Palingon', 'Palo-Alto', 'Pansol', 'Parian', 'Prinza',
+                'Punta', 'Puting Lupa', 'Real', 'Saimsim', 'Sampiruhan',
+                'San Cristobal', 'San Jose', 'San Juan', 'Sirang Lupa', 'Sucol',
+                'Turbina', 'Ulango', 'Uwisan'
+            ],
+            'San Pedro': [
+                'Bagong Silang', 'Cuyab', 'Estrella', 'Landayan', 'Langgam',
+                'Laram', 'Magsaysay', 'Narra', 'Nueva', 'Pacita I',
+                'Pacita II', 'Poblacion', 'Riverside', 'Rosario', 'Sampaguita Village',
+                'San Antonio', 'San Roque', 'San Vicente', 'Santo Niño', 'United Bayanihan',
+                'United Better Living'
+            ],
+            'Santa Rosa': [
+                'Aplaya', 'Balibago', 'Caingin', 'Dila', 'Dita',
+                'Don Jose', 'Ibaba', 'Labas', 'Macabling', 'Malitlit',
+                'Malusak', 'Market Area', 'Pook', 'Pulong Santa Cruz', 'Santo Domingo',
+                'Sinalhan', 'Tagapo'
+            ],
+            // Cebu Cities
+            'Cebu City': [
+                'Adlaon', 'Agsungot', 'Apas', 'Babag', 'Bacayan',
+                'Banilad', 'Basak Pardo', 'Basak San Nicolas', 'Binaliw', 'Bonbon',
+                'Budlaan', 'Buhisan', 'Bulacao', 'Busay', 'Calamba',
+                'Cambinocot', 'Capitol Site', 'Carreta', 'Central', 'Cogon Pardo',
+                'Cogon Ramos', 'Day-as', 'Duljo Fatima', 'Ermita', 'Guadalupe',
+                'Guba', 'Hipodromo', 'Inayawan', 'Kalubihan', 'Kamagayan',
+                'Kasambagan', 'Kinasang-an Pardo', 'Labangon', 'Lahug', 'Lorega San Miguel',
+                'Lusaran', 'Luz', 'Mabini', 'Mabolo', 'Malubog',
+                'Pahina Central', 'Pahina San Nicolas', 'Pamutan', 'Pardo', 'Parian',
+                'Pasil', 'Pit-os', 'Poblacion Pardo', 'Pulangbato', 'Pung-ol-Sibugay',
+                'Punta Princesa', 'Quiot Pardo', 'Sambag I', 'Sambag II', 'San Antonio',
+                'San Jose', 'San Nicolas Proper', 'San Roque', 'Santa Cruz', 'Sapangdaku',
+                'Sawang Calero', 'Sinsin', 'Sirao', 'Suba San Nicolas', 'Sudlon I',
+                'Sudlon II', 'T. Padilla', 'Tabunan', 'Tagbao', 'Talamban',
+                'Taptap', 'Tejero', 'Tinago', 'Tisa', 'To-ong Pardo',
+                'Zapatera'
+            ],
+            'Mandaue': [
+                'Bakilid', 'Banilad', 'Basak', 'Cabancalan', 'Cambaro',
+                'Canduman', 'Casili', 'Casuntingan', 'Centro', 'Cubacub',
+                'Guizo', 'Ibabao-Estancia', 'Jagobiao', 'Labogon', 'Looc',
+                'Maguikay', 'Mantuyong', 'Opao', 'Paknaan', 'Pagsabungan',
+                'Subangdaku', 'Tabok', 'Tawason', 'Tingub', 'Tipolo',
+                'Umapad'
+            ],
+            'Lapu-Lapu': [
+                'Agus', 'Babag', 'Bankal', 'Baring', 'Basak',
+                'Buaya', 'Calawisan', 'Canjulao', 'Caw-oy', 'Cawhagan',
+                'Gun-ob', 'Ibo', 'Looc', 'Mactan', 'Maribago',
+                'Marigondon', 'Pajac', 'Pajo', 'Poblacion', 'Punta Engaño',
+                'Pusok', 'Sabang', 'Santa Rosa', 'Subabasbas', 'Tungasan',
+                'Tumalog'
+            ]
+        };
+
+        // Function to update barangays based on selected city
+        function updateBarangays() {
+            const selectedCity = citySelect.value || cityInput.value || '';
+            
+            if (!selectedCity) {
+                // No city selected - hide both
+                barangaySelect.style.display = 'none';
+                barangayInput.style.display = 'none';
+                barangayNote.textContent = 'Select city first';
+                barangayNote.style.display = 'block';
+                return;
+            }
+            
+            if (cityBarangays[selectedCity]) {
+                // City has barangays - show dropdown
+                barangaySelect.innerHTML = '<option value="">Select Barangay (Optional)</option>';
+                cityBarangays[selectedCity].forEach(barangay => {
+                    const option = document.createElement('option');
+                    option.value = barangay;
+                    option.textContent = barangay;
+                    barangaySelect.appendChild(option);
+                });
+                // Add "Other" option
+                const otherOption = document.createElement('option');
+                otherOption.value = 'Other';
+                otherOption.textContent = 'Other (Enter below)';
+                barangaySelect.appendChild(otherOption);
+                
+                barangaySelect.style.display = 'block';
+                barangayInput.style.display = 'none';
+                barangayNote.style.display = 'none';
+                barangayInput.value = '';
+            } else {
+                // City doesn't have barangays - show text input
+                barangaySelect.style.display = 'none';
+                barangayInput.style.display = 'block';
+                barangayNote.style.display = 'none';
+                barangaySelect.value = '';
+            }
+        }
+
+        // Handle "Other" option in barangay dropdown
+        barangaySelect.addEventListener('change', function() {
+            if (this.value === 'Other') {
+                barangayInput.style.display = 'block';
+                barangayInput.placeholder = 'Enter Barangay name';
+            } else {
+                barangayInput.style.display = 'none';
+                barangayInput.value = '';
+            }
+        });
+
+        // Listen for province changes
+        provinceSelect.addEventListener('change', () => {
+            updateCities();
+            // Reset barangay when province changes
+            barangaySelect.value = '';
+            barangayInput.value = '';
+            barangaySelect.style.display = 'none';
+            barangayInput.style.display = 'none';
+            barangayNote.textContent = 'Select city first';
+            barangayNote.style.display = 'block';
+        });
+
+        // Listen for city changes (both dropdown and input)
+        citySelect.addEventListener('change', updateBarangays);
+        cityInput.addEventListener('input', updateBarangays);
+
+        // Character counter
+        description.addEventListener('input', () => {
+            charCount.textContent = description.value.length;
+        });
+
+        // File upload handling
+        fileUpload.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUpload.classList.add('dragover');
+        });
+
+        fileUpload.addEventListener('dragleave', () => {
+            fileUpload.classList.remove('dragover');
+        });
+
+        fileUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUpload.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            Array.from(files).forEach(file => {
+                if (file.size > 10 * 1024 * 1024) {
+                    showAlert(errorAlert, 'File size must be less than 10MB', false);
+                    return;
+                }
+                selectedFiles.push(file);
+            });
+            updateFilePreview();
+        }
+
+        function updateFilePreview() {
+            if (selectedFiles.length === 0) {
+                filePreview.classList.remove('show');
+                return;
+            }
+
+            filePreview.classList.add('show');
+            filePreview.innerHTML = selectedFiles.map((file, index) => {
+                const isImage = file.type.startsWith('image/');
+                const fileSize = (file.size / 1024 / 1024).toFixed(2);
+                
+                return `
+                    <div class="file-preview-item">
+                        ${isImage ? `<img src="${URL.createObjectURL(file)}" alt="Preview">` : '<div style="width: 60px; height: 60px; background: rgba(108,99,255,0.08); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--brand-primary); font-size:1.4rem;">📹</div>'}
+                        <div class="file-info">
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-size">${fileSize} MB</div>
+                        </div>
+                        <span class="remove-file" onclick="removeFile(${index})">×</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.removeFile = function(index) {
+            selectedFiles.splice(index, 1);
+            updateFilePreview();
+        };
+
+        function showAlert(alertElement, message, isSuccess = true) {
+            alertElement.textContent = message;
+            alertElement.classList.add('show');
+            setTimeout(() => {
+                alertElement.classList.remove('show');
+            }, 5000);
+        }
+
+        function setLoading(show, text = 'Submitting complaint...') {
+            loadingText.textContent = text;
+            if (show) {
+                loadingOverlay.classList.add('show');
+                submitBtn.disabled = true;
+            } else {
+                loadingOverlay.classList.remove('show');
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Promise timeout helper to avoid indefinite waiting
+        function withTimeout(promise, ms, timeoutMessage = 'Request timed out') {
+            let timeoutId;
+            const timeout = new Promise((_, reject) => {
+                timeoutId = setTimeout(() => reject(new Error(timeoutMessage)), ms);
+            });
+            return Promise.race([
+                promise.finally(() => clearTimeout(timeoutId)),
+                timeout
+            ]);
+        }
+
+        // Form submission
+        complaintForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Hide previous alerts
+            successAlert.classList.remove('show');
+            errorAlert.classList.remove('show');
+
+            // Get form data
+            const formData = new FormData(complaintForm);
+            const province = formData.get('province') || '';
+            const city = citySelect.value || cityInput.value || '';
+            const barangay = (barangaySelect.value && barangaySelect.value !== 'Other') ? barangaySelect.value : (barangayInput.value || '');
+            const locationDetail = formData.get('location') || '';
+
+            // Build location string
+            const locationParts = [barangay, city, province].filter(Boolean);
+            let location = locationParts.join(', ');
+            if (locationDetail) {
+                location += location ? ` - ${locationDetail}` : locationDetail;
+            }
+
+            if (!location.trim()) {
+                showAlert(errorAlert, 'Please provide at least one location field (Barangay, City, or Province)', false);
+                return;
+            }
+
+            const complaintData = {
+                title: formData.get('title'),
+                description: formData.get('description'),
+                category: formData.get('category'),
+                location: location,
+                priority: formData.get('priority')
+            };
+
+            try {
+                const submitStartTime = Date.now();
+                
+                // Check if file is selected
+                console.log('📋 selectedFiles array:', selectedFiles);
+                console.log('📋 selectedFiles length:', selectedFiles.length);
+                const fileToUpload = selectedFiles[0] || null;
+                console.log('📋 fileToUpload:', fileToUpload);
+                
+                if (fileToUpload) {
+                    console.log('✅ Submitting complaint WITH file:', fileToUpload.name, fileToUpload.size, 'bytes', 'Type:', fileToUpload.type);
+                    setLoading(true, 'Saving complaint... Uploading file (please wait)');
+                } else {
+                    console.log('⚠️ Submitting complaint WITHOUT file');
+                    setLoading(true, 'Saving complaint...');
+                }
+                
+                // Progressive loading messages if slow
+                let slowHintId = setTimeout(() => {
+                    loadingText.textContent = 'Still saving... your network may be slow';
+                }, 6000);
+                let slowerHintId = setTimeout(() => {
+                    loadingText.textContent = 'Almost there... do not close this tab';
+                }, 12000);
+
+                // Submit complaint (only first file for now, can be extended)
+                // Complaint saves immediately, file uploads in background
+                // Dashboard will show image automatically when upload completes
+                console.log('🚀 Calling submitComplaint with file:', fileToUpload ? 'YES' : 'NO');
+                const result = await withTimeout(
+                    submitComplaint(complaintData, fileToUpload),
+                    15000,
+                    'Saving took too long. Please check your connection and try again.'
+                );
+
+                clearTimeout(slowHintId);
+                clearTimeout(slowerHintId);
+                console.log('✅ submitComplaint returned:', result);
+                
+                const submitTime = Date.now() - submitStartTime;
+                console.log(`⏱️ Form submission completed in ${submitTime}ms`);
+
+                if (result.success) {
+                    showAlert(successAlert, result.message, true);
+                    complaintForm.reset();
+                    selectedFiles = [];
+                    updateFilePreview();
+                    charCount.textContent = '0';
+                    setLoading(false);
+                    
+                    // Redirect to dashboard
+                    window.location.href = 'dashboard.html';
+                } else {
+                    showAlert(errorAlert, result.error || 'Failed to submit complaint. Please try again.', false);
+                    setLoading(false);
+                }
+            } catch (error) {
+                console.error('Error submitting complaint:', error);
+                // If saving timed out or upload failed, surface the message
+                showAlert(errorAlert, error?.message || 'An unexpected error occurred. Please try again.', false);
+                setLoading(false);
+            }
+        });
+
+        // Cancel button
+        cancelBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to cancel? Your form data will be lost.')) {
+                window.location.href = 'dashboard.html';
+            }
+        });
+
+        // Authentication Guard
+        onAuthChange(async (user) => {
+            if (!user) {
+                window.location.href = 'Login.html';
+                return;
+            }
+
+            const adminStatus = await isAdmin();
+            if (adminStatus) {
+                window.location.href = 'admin.html';
+                return;
+            }
+
+            // Populate sidebar user info
+            try {
+                const displayName = user.displayName || user.email || 'User';
+                const email = user.email || '';
+                document.getElementById('userName').textContent = displayName;
+                document.getElementById('userEmail').textContent = email;
+                const avatar = document.getElementById('userAvatar');
+                avatar.textContent = (displayName || email || 'U').charAt(0).toUpperCase();
+            } catch (e) {
+                console.warn('Could not update user info on complaint form:', e);
+            }
+        });
+
+        // Handle logout
+        logoutBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                const result = await logoutUser();
+                if (result.success) {
+                    window.location.href = 'Login.html';
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
