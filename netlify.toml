@@ -1,0 +1,1 @@
+-e "[build]\n  command = \"npm run build\"\n  publish = \"dist\"" 
