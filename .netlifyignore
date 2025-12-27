@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.git/
+.gitignore
+package.json
+package-lock.json
+*.md
+Screenshot*.png
+-p/
+ireport-ph-default-rtdb-export.json
+FIREBASE-RULES-COMPLETE.json
+firebase-database-rules.json
+
