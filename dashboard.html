@@ -2506,10 +2506,135 @@
         }
 
         @media (max-width: 900px) {
-            .sidebar{ display:none; }
             .content{ margin-left:0; padding:16px; }
             .media{ width:120px; }
         }
+
+        /* Mobile & Tablet Sidebar: slide instead of disappear */
+        @media (max-width: 900px) {
+            .sidebar {
+                display: flex !important;
+                position: fixed;
+                left: -280px;
+                top: 0;
+                width: 280px;
+                height: 100vh;
+                transition: left 0.3s ease;
+                z-index: 2000;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            /* Sidebar overlay when open */
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(4px);
+                z-index: 1999;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+                opacity: 1;
+            }
+
+            .content {
+                margin-left: 0 !important;
+                padding: 16px;
+            }
+
+            /* Hamburger menu button */
+            .mobile-menu-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 44px;
+                height: 44px;
+                background: var(--surface-solid);
+                border: 1px solid var(--border-soft);
+                border-radius: 12px;
+                cursor: pointer;
+                position: fixed;
+                top: 20px;
+                left: 16px;
+                z-index: 1500;
+                box-shadow: 0 8px 16px var(--shadow-card);
+                transition: all 0.3s ease;
+            }
+
+            .mobile-menu-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 12px 24px var(--shadow-card);
+            }
+
+            .mobile-menu-btn span {
+                display: block;
+                width: 24px;
+                height: 2px;
+                background: var(--text-primary);
+                border-radius: 2px;
+                transition: all 0.3s ease;
+                position: relative;
+            }
+
+            .mobile-menu-btn span::before,
+            .mobile-menu-btn span::after {
+                content: '';
+                position: absolute;
+                width: 24px;
+                height: 2px;
+                background: var(--text-primary);
+                border-radius: 2px;
+                transition: all 0.3s ease;
+            }
+
+            .mobile-menu-btn span::before {
+                top: -8px;
+            }
+
+            .mobile-menu-btn span::after {
+                bottom: -8px;
+            }
+
+            .mobile-menu-btn.active span {
+                background: transparent;
+            }
+
+            .mobile-menu-btn.active span::before {
+                top: 0;
+                transform: rotate(45deg);
+            }
+
+            .mobile-menu-btn.active span::after {
+                bottom: 0;
+                transform: rotate(-45deg);
+            }
+
+            /* Adjust dashboard header for mobile menu */
+            .dashboard-header {
+                margin-top: 60px;
+            }
+        }
+
+        .mobile-menu-btn { display: none; }
+
+        html[data-theme="light"] .mobile-menu-btn { 
+            background: #ffffff; 
+            border: 1px solid rgba(0,52,89,0.12); 
+            box-shadow: 0 8px 16px rgba(0,52,89,0.12); 
+        }
+        html[data-theme="light"] .mobile-menu-btn span,
+        html[data-theme="light"] .mobile-menu-btn span::before,
+        html[data-theme="light"] .mobile-menu-btn span::after { 
+            background: #003459; 
+        }
+
         /* ============================================
         7-Day Weather Forecast Card (Inline in Stats Grid)
         ============================================ */
@@ -3068,8 +3193,16 @@
 </style>
 </head>
 <body>
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+        <span></span>
+    </button>
+    
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
     <!-- Sidebar Navigation -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
             <div class="sidebar-brand-icon">
                 <img src="./Screenshot 2025-12-19 134046.png" alt="VoiceUp Logo">
@@ -4223,6 +4356,52 @@
                 console.error('Logout error:', error);
                 errorMessage.textContent = 'An error occurred during logout.';
                 errorMessage.style.display = 'block';
+            }
+        });
+
+        // Mobile sidebar toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function toggleSidebar() {
+            if (window.innerWidth <= 900) {
+                sidebar.classList.toggle('open');
+                sidebarOverlay.classList.toggle('active');
+                mobileMenuBtn.classList.toggle('active');
+            }
+        }
+
+        function closeSidebar() {
+            if (window.innerWidth <= 900) {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('active');
+                mobileMenuBtn.classList.remove('active');
+            }
+        }
+
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', toggleSidebar);
+        }
+
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', closeSidebar);
+        }
+
+        // Close sidebar when clicking on nav links (mobile)
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 900) {
+                    closeSidebar();
+                }
+            });
+        });
+
+        // Close sidebar on window resize if it becomes desktop view
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 900) {
+                closeSidebar();
             }
         });
     </script>
