@@ -672,7 +672,15 @@ window.adminPagination = window.adminPagination || {
 </head>
 <body>
     <div class="layout">
-        <aside class="sidebar">
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+            <span></span>
+        </button>
+        
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-brand-area">
                 <div class="brand-icon">
                     <img src="./Screenshot 2025-12-19 134046.png" alt="VoiceUp Logo" class="brand-logo">
@@ -1978,6 +1986,52 @@ window.adminPagination = window.adminPagination || {
                 render();
             }
         };
+
+        // Mobile sidebar toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function toggleSidebar() {
+            if (window.innerWidth <= 900) {
+                sidebar.classList.toggle('open');
+                sidebarOverlay.classList.toggle('active');
+                mobileMenuBtn.classList.toggle('active');
+            }
+        }
+
+        function closeSidebar() {
+            if (window.innerWidth <= 900) {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('active');
+                mobileMenuBtn.classList.remove('active');
+            }
+        }
+
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', toggleSidebar);
+        }
+
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', closeSidebar);
+        }
+
+        // Close sidebar when clicking on nav links (mobile)
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 900) {
+                    closeSidebar();
+                }
+            });
+        });
+
+        // Close sidebar on window resize if it becomes desktop view
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 900) {
+                closeSidebar();
+            }
+        });
     </script>
 </body>
 </html>
