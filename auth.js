@@ -187,6 +187,67 @@ export async function getUserData(userId) {
 }
 
 /**
+ * Update user profile (displayName/username)
+ * @param {string} userId - User ID
+ * @param {Object} updates - Object with fields to update (displayName, etc.)
+ * @returns {Promise<Object>} Result object
+ */
+export async function updateUserProfile(userId, updates) {
+    try {
+        const user = auth.currentUser;
+        if (!user || user.uid !== userId) {
+            return {
+                success: false,
+                error: "Unauthorized: You can only update your own profile"
+            };
+        }
+
+        const userRef = ref(db, `users/${userId}`);
+        const snapshot = await get(userRef);
+        
+        if (!snapshot.exists()) {
+            return {
+                success: false,
+                error: "User not found"
+            };
+        }
+
+        const userData = snapshot.val();
+        const updatedData = {
+            ...userData,
+            ...updates,
+            updatedAt: Date.now()
+        };
+
+        await set(userRef, updatedData);
+
+        // Update Firebase Auth displayName if provided
+        if (updates.displayName && user.updateProfile) {
+            try {
+                await user.updateProfile({
+                    displayName: updates.displayName
+                });
+            } catch (authError) {
+                console.warn("Could not update Firebase Auth displayName:", authError);
+                // Continue even if Auth update fails - DB update succeeded
+            }
+        }
+
+        return {
+            success: true,
+            message: "Profile updated successfully",
+            data: updatedData
+        };
+    } catch (error) {
+        console.error("Error updating user profile:", error);
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+}
+
+/**
  * Sign in with Google for Admin
  * @param {boolean} forceAccountSelection - Force account picker to show
  * @returns {Promise<Object>} User object with user data and role
