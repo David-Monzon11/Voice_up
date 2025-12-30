@@ -502,7 +502,7 @@ html[data-theme="light"] .mobile-menu-btn span::after { background: #003459; }
 
     /* Hamburger menu button */
     .mobile-menu-btn {
-        display: flex;
+        display: flex !important;
         align-items: center;
         justify-content: center;
         width: 44px;
@@ -581,8 +581,16 @@ html[data-theme="light"] .mobile-menu-btn span::after { background: #003459; }
     }
 }
 
+/* Mobile menu button - hidden by default, shown on mobile */
 .mobile-menu-btn { 
     display: none; 
+}
+
+/* Show mobile menu button on mobile devices */
+@media (max-width: 900px) {
+    .mobile-menu-btn {
+        display: flex !important;
+    }
 }
 
 html[data-theme="light"] .mobile-menu-btn { 
