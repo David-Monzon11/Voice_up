@@ -810,14 +810,20 @@
             sidebarOverlay.addEventListener('click', closeSidebar);
         }
 
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth <= 900) {
-                    closeSidebar();
-                }
+        // Function to attach nav link handlers (will be called after nav is updated)
+        function attachNavLinkHandlers() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 900) {
+                        closeSidebar();
+                    }
+                });
             });
-        });
+        }
+        
+        // Attach handlers initially
+        attachNavLinkHandlers();
 
         window.addEventListener('resize', () => {
             if (window.innerWidth > 900) {
@@ -832,14 +838,22 @@
                 return;
             }
 
-            // Allow both admin and regular users to access settings
+            // Check if user is admin
             const adminStatus = await isAdmin();
             
-            // Update navigation based on user role
+            // Update page title and branding for admin
             if (adminStatus) {
-                // Update sidebar navigation for admin
-                const navSection = document.querySelector('.nav-section');
-                if (navSection) {
+                const brandName = document.querySelector('.sidebar-brand-name');
+                const brandSub = document.querySelector('.sidebar-brand-sub');
+                if (brandName) brandName.textContent = 'iReportPH';
+                if (brandSub) brandSub.textContent = 'Admin Control';
+            }
+            
+            // Update navigation based on user role IMMEDIATELY
+            const navSection = document.querySelector('.nav-section');
+            if (navSection) {
+                if (adminStatus) {
+                    // Admin navigation
                     navSection.innerHTML = `
                         <div class="nav-section-title">Overview</div>
                         <a href="./admin.html" class="nav-link nav-link-ghost">
@@ -859,7 +873,27 @@
                             <span class="nav-link-text">Settings</span>
                         </a>
                     `;
+                } else {
+                    // Regular user navigation (default)
+                    navSection.innerHTML = `
+                        <div class="nav-section-title">Navigation</div>
+                        <a href="./dashboard.html" class="nav-link nav-link-ghost">
+                            <span class="nav-icon">📊</span>
+                            <span class="nav-link-text">Dashboard</span>
+                        </a>
+                        <a href="./complaintForm.html" class="nav-link nav-link-ghost">
+                            <span class="nav-icon">➕</span>
+                            <span class="nav-link-text">Submit Complaint</span>
+                        </a>
+                        <a href="./settings.html" class="nav-link active">
+                            <span class="nav-icon">⚙️</span>
+                            <span class="nav-link-text">Settings</span>
+                        </a>
+                    `;
                 }
+                
+                // Re-attach click handlers for mobile sidebar closing
+                attachNavLinkHandlers();
             }
 
             try {
