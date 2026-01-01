@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iReportPH - User Dashboard</title>
     <link rel="icon" type="image/png" href="./Screenshot 2025-12-19 134046.png">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script type="module" src="./firebase-config.js"></script>
     <style>
         * {
@@ -272,6 +274,23 @@
         }
 
         .nav-link .nav-icon {
+            width: 20px;
+            height: 20px;
+        }
+        .nav-link ion-icon.nav-icon {
+            font-size: 1.2rem;
+            width: 1.2rem;
+            height: 1.2rem;
+            opacity: 0.9;
+            transition: opacity 0.2s ease;
+        }
+        .nav-link:hover ion-icon.nav-icon {
+            opacity: 1;
+        }
+        .nav-link.active ion-icon.nav-icon {
+            opacity: 1;
+        }
+        .nav-link .nav-icon-emoji {
             width: 20px;
             height: 20px;
             display: flex;
@@ -550,6 +569,16 @@
         }
 
         .stat-card-icon {
+            font-size: 1.5rem;
+            background: rgba(15, 23, 42, 0.5);
+        }
+        .stat-card-icon ion-icon {
+            font-size: 1.4rem;
+            width: 1.4rem;
+            height: 1.4rem;
+            color: inherit;
+        }
+        .stat-card-icon-emoji {
             font-size: 1.5rem;
             background: rgba(15, 23, 42, 0.5);
             width: 42px;
@@ -3243,15 +3272,15 @@
             <div class="nav-section">
                 <div class="nav-section-title">Navigation</div>
                 <a href="./dashboard.html" class="nav-link active">
-                    <span class="nav-icon">📊</span>
+                    <ion-icon name="grid-outline" class="nav-icon"></ion-icon>
                     <span class="nav-link-text">Dashboard</span>
                 </a>
                 <a href="./complaintForm.html" class="nav-link nav-link-ghost">
-                    <span class="nav-icon">➕</span>
+                    <ion-icon name="add-circle-outline" class="nav-icon"></ion-icon>
                     <span class="nav-link-text">Submit Complaint</span>
                 </a>
                 <a href="./settings.html" class="nav-link nav-link-ghost">
-                    <span class="nav-icon">⚙️</span>
+                    <ion-icon name="settings-outline" class="nav-icon"></ion-icon>
                     <span class="nav-link-text">Settings</span>
                 </a>
             </div>
@@ -3303,7 +3332,7 @@
                 <div class="stat-card gradient-total">
                     <div class="stat-card-header">
                         <span class="stat-card-title">Total Complaints</span>
-                        <span class="stat-card-icon">📊</span>
+                        <ion-icon name="document-text-outline" class="stat-card-icon"></ion-icon>
                     </div>
                     <div class="stat-value" id="totalComplaints">0</div>
                     <div class="stat-card-subtext">All time submissions</div>
@@ -3311,7 +3340,7 @@
                 <div class="stat-card gradient-pending">
                     <div class="stat-card-header">
                         <span class="stat-card-title">Pending</span>
-                        <span class="stat-card-icon">⏱️</span>
+                        <ion-icon name="time-outline" class="stat-card-icon"></ion-icon>
                     </div>
                     <div class="stat-value" id="pendingCount">0</div>
                     <div class="stat-card-subtext">Waiting for review</div>
@@ -3319,7 +3348,7 @@
                 <div class="stat-card gradient-progress">
                     <div class="stat-card-header">
                         <span class="stat-card-title">In Progress</span>
-                        <span class="stat-card-icon">🚧</span>
+                        <ion-icon name="construct-outline" class="stat-card-icon"></ion-icon>
                     </div>
                     <div class="stat-value" id="inProgressCount">0</div>
                     <div class="stat-card-subtext">Currently handled</div>
@@ -3327,7 +3356,7 @@
                 <div class="stat-card gradient-resolved">
                     <div class="stat-card-header">
                         <span class="stat-card-title">Resolved</span>
-                        <span class="stat-card-icon">✅</span>
+                        <ion-icon name="checkmark-circle-outline" class="stat-card-icon"></ion-icon>
                     </div>
                     <div class="stat-value" id="resolvedCount">0</div>
                     <div class="stat-card-subtext">Completed successfully</div>

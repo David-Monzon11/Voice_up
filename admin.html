@@ -7,6 +7,8 @@
     <link rel="icon" type="image/png" href="./Screenshot 2025-12-19 134046.png">
     <link rel="stylesheet" href="./admin-dashboard.css">
     <link rel="stylesheet" href="./style.css">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <style>
         /* Weather Forecast Inline Styles (in stats grid) */
         .weather-forecast-inline {
@@ -703,19 +705,19 @@ window.adminPagination = window.adminPagination || {
                 <div class="nav-section">
                     <div class="nav-section-title">Overview</div>
                     <a href="./admin.html" class="nav-link active">
-                        <span class="nav-link-icon">📊</span>
+                        <ion-icon name="grid-outline" class="nav-link-icon"></ion-icon>
                         <span class="nav-link-text">Dashboard</span>
                     </a>
                     <a href="./admin-solved.html" class="nav-link nav-link-ghost">
-                        <span class="nav-link-icon">✅</span>
+                        <ion-icon name="checkmark-circle-outline" class="nav-link-icon"></ion-icon>
                         <span class="nav-link-text">Solved Complaints</span>
                     </a>
                     <a href="./admin-analytics.html" class="nav-link nav-link-ghost">
-                        <span class="nav-link-icon">📈</span>
+                        <ion-icon name="bar-chart-outline" class="nav-link-icon"></ion-icon>
                         <span class="nav-link-text">Analytics</span>
                     </a>
                     <a href="./settings.html" class="nav-link nav-link-ghost">
-                        <span class="nav-link-icon">⚙️</span>
+                        <ion-icon name="settings-outline" class="nav-link-icon"></ion-icon>
                         <span class="nav-link-text">Settings</span>
                     </a>
                 </div>
@@ -753,7 +755,7 @@ window.adminPagination = window.adminPagination || {
                     <div class="stat-card gradient-total">
                         <div class="stat-card-header">
                             <span class="stat-card-title">Total Complaints</span>
-                            <span class="stat-card-icon">📊</span>
+                            <ion-icon name="document-text-outline" class="stat-card-icon"></ion-icon>
                         </div>
                         <div class="stat-value" id="statTotal">0</div>
                         <div class="stat-card-subtext">All time submissions</div>
@@ -761,7 +763,7 @@ window.adminPagination = window.adminPagination || {
                     <div class="stat-card gradient-pending">
                         <div class="stat-card-header">
                             <span class="stat-card-title">Pending</span>
-                            <span class="stat-card-icon">⏱️</span>
+                            <ion-icon name="time-outline" class="stat-card-icon"></ion-icon>
                         </div>
                         <div class="stat-value" id="statPending">0</div>
                         <div class="stat-card-subtext">Waiting for review</div>
@@ -769,7 +771,7 @@ window.adminPagination = window.adminPagination || {
                     <div class="stat-card gradient-progress">
                         <div class="stat-card-header">
                             <span class="stat-card-title">In Progress</span>
-                            <span class="stat-card-icon">🚧</span>
+                            <ion-icon name="construct-outline" class="stat-card-icon"></ion-icon>
                         </div>
                         <div class="stat-value" id="statInProgress">0</div>
                         <div class="stat-card-subtext">Currently handled</div>
@@ -777,7 +779,7 @@ window.adminPagination = window.adminPagination || {
                     <div class="stat-card gradient-resolved">
                         <div class="stat-card-header">
                             <span class="stat-card-title">Resolved</span>
-                            <span class="stat-card-icon">✅</span>
+                            <ion-icon name="checkmark-circle-outline" class="stat-card-icon"></ion-icon>
                         </div>
                         <div class="stat-value" id="statResolved">0</div>
                         <div class="stat-card-subtext">Completed successfully</div>
@@ -785,7 +787,7 @@ window.adminPagination = window.adminPagination || {
                     <div class="stat-card gradient-rejected">
                         <div class="stat-card-header">
                             <span class="stat-card-title">Rejected</span>
-                            <span class="stat-card-icon">⚠️</span>
+                            <ion-icon name="close-circle-outline" class="stat-card-icon"></ion-icon>
                         </div>
                         <div class="stat-value" id="statRejected">0</div>
                         <div class="stat-card-subtext">Not approved</div>
@@ -844,7 +846,7 @@ window.adminPagination = window.adminPagination || {
                     <div class="analytics-card">
                         <div class="analytics-card-header">
                             <span class="analytics-card-title">Complaints Over Time</span>
-                            <span class="analytics-card-icon">📈</span>
+                            <ion-icon name="trending-up-outline" class="analytics-card-icon"></ion-icon>
                         </div>
                         <div class="analytics-card-subtext">Trend of complaints submitted</div>
                         <div class="analytics-chart-wrapper">
@@ -854,7 +856,7 @@ window.adminPagination = window.adminPagination || {
                     <div class="analytics-card">
                         <div class="analytics-card-header">
                             <span class="analytics-card-title">Status Distribution</span>
-                            <span class="analytics-card-icon">📊</span>
+                            <ion-icon name="pie-chart-outline" class="analytics-card-icon"></ion-icon>
                         </div>
                         <div class="analytics-card-subtext">Breakdown by status</div>
                         <div class="analytics-chart-wrapper">

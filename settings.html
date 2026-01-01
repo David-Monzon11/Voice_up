@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iReportPH - Settings</title>
     <link rel="icon" type="image/png" href="./Screenshot 2025-12-19 134046.png">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script type="module" src="./firebase-config.js"></script>
     <link rel="stylesheet" href="./style.css">
     <style>
@@ -239,6 +241,19 @@
         .nav-link .nav-icon {
             font-size: 1.1rem;
             opacity: 0.9;
+        }
+        .nav-link ion-icon.nav-icon {
+            font-size: 1.2rem;
+            width: 1.2rem;
+            height: 1.2rem;
+            opacity: 0.9;
+            transition: opacity 0.2s ease;
+        }
+        .nav-link:hover ion-icon.nav-icon {
+            opacity: 1;
+        }
+        .nav-link.active ion-icon.nav-icon {
+            opacity: 1;
         }
 
         .nav-link .nav-link-text {
@@ -683,15 +698,15 @@
             <div class="nav-section">
                 <div class="nav-section-title">Navigation</div>
                 <a href="./dashboard.html" class="nav-link nav-link-ghost">
-                    <span class="nav-icon">📊</span>
+                    <ion-icon name="grid-outline" class="nav-icon"></ion-icon>
                     <span class="nav-link-text">Dashboard</span>
                 </a>
                 <a href="./complaintForm.html" class="nav-link nav-link-ghost">
-                    <span class="nav-icon">➕</span>
+                    <ion-icon name="add-circle-outline" class="nav-icon"></ion-icon>
                     <span class="nav-link-text">Submit Complaint</span>
                 </a>
                 <a href="./settings.html" class="nav-link active">
-                    <span class="nav-icon">⚙️</span>
+                    <ion-icon name="settings-outline" class="nav-icon"></ion-icon>
                     <span class="nav-link-text">Settings</span>
                 </a>
             </div>
@@ -857,19 +872,19 @@
                     navSection.innerHTML = `
                         <div class="nav-section-title">Overview</div>
                         <a href="./admin.html" class="nav-link nav-link-ghost">
-                            <span class="nav-icon">📊</span>
+                            <ion-icon name="grid-outline" class="nav-icon"></ion-icon>
                             <span class="nav-link-text">Dashboard</span>
                         </a>
                         <a href="./admin-solved.html" class="nav-link nav-link-ghost">
-                            <span class="nav-icon">✅</span>
+                            <ion-icon name="checkmark-circle-outline" class="nav-icon"></ion-icon>
                             <span class="nav-link-text">Solved Complaints</span>
                         </a>
                         <a href="./admin-analytics.html" class="nav-link nav-link-ghost">
-                            <span class="nav-icon">📈</span>
+                            <ion-icon name="bar-chart-outline" class="nav-icon"></ion-icon>
                             <span class="nav-link-text">Analytics</span>
                         </a>
                         <a href="./settings.html" class="nav-link active">
-                            <span class="nav-icon">⚙️</span>
+                            <ion-icon name="settings-outline" class="nav-icon"></ion-icon>
                             <span class="nav-link-text">Settings</span>
                         </a>
                     `;
@@ -878,15 +893,15 @@
                     navSection.innerHTML = `
                         <div class="nav-section-title">Navigation</div>
                         <a href="./dashboard.html" class="nav-link nav-link-ghost">
-                            <span class="nav-icon">📊</span>
+                            <ion-icon name="grid-outline" class="nav-icon"></ion-icon>
                             <span class="nav-link-text">Dashboard</span>
                         </a>
                         <a href="./complaintForm.html" class="nav-link nav-link-ghost">
-                            <span class="nav-icon">➕</span>
+                            <ion-icon name="add-circle-outline" class="nav-icon"></ion-icon>
                             <span class="nav-link-text">Submit Complaint</span>
                         </a>
                         <a href="./settings.html" class="nav-link active">
-                            <span class="nav-icon">⚙️</span>
+                            <ion-icon name="settings-outline" class="nav-icon"></ion-icon>
                             <span class="nav-link-text">Settings</span>
                         </a>
                     `;
